@@ -1,0 +1,4 @@
+Pillow>=10.4,<13
+
+# SVG display; prebuilt Windows wheels, no system renderer required.
+resvg_py==0.5.0
