@@ -1,5 +1,5 @@
 """Single application version and small window-size helper shared by the Tk screens."""
-APP_VERSION = '0.8.3-RC1'
+APP_VERSION = '0.8.2-RC1'
 
 
 def fit_window(window, width, height, min_width=None, min_height=None):

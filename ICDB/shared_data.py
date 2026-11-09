@@ -7,34 +7,31 @@ import sys
 from pathlib import Path
 
 
-def config_base(environ=None):
-    env = os.environ if environ is None else environ
-    return Path(env.get('LOCALAPPDATA') or env.get('XDG_CONFIG_HOME') or Path.home()/'.config')
-
-
 def location_file(environ=None):
-    return config_base(environ)/'ICSuite'/'data_location.json'
+    env=os.environ if environ is None else environ
+    base=env.get('LOCALAPPDATA') or env.get('XDG_CONFIG_HOME') or str(Path.home()/'.config')
+    return Path(base)/'IC_Tools'/'data_location.json'
 
 
 def data_directory(app_root, environ=None):
-    env = os.environ if environ is None else environ
+    env=os.environ if environ is None else environ
     if env.get('ICLENS_DATA'):
         return Path(env['ICLENS_DATA']).expanduser().resolve()
-    # Read old installations without writing anything on import. New saves use
-    # ICSuite; both applications ship this same resolver.
-    for settings in (location_file(env), config_base(env)/'IC_Tools'/'data_location.json'):
-        if not settings.exists():
-            continue
+    settings=location_file(env)
+    if settings.exists():
         try:
-            value = json.loads(settings.read_text('utf-8-sig'))
-        except (ValueError, OSError) as exc:
-            raise ValueError(f'DATA folder setting file is unreadable: {settings}\n{exc}') from exc
-        value = value.get('data_folder') if isinstance(value, dict) else None
-        if not isinstance(value, str) or not value.strip() or not Path(value).expanduser().is_absolute():
-            raise ValueError('Invalid absolute DATA folder setting: '+str(settings))
+            # Notepad and PowerShell 5 write a UTF-8 BOM.
+            value=json.loads(settings.read_text('utf-8-sig'))
+        except ValueError as exc:
+            raise ValueError(f'DATA folder setting file is unreadable: {settings}\n{exc}\n'
+                             'Fix or delete this file, then restart (or choose the DATA folder again).') from exc
+        value=value.get('data_folder') if isinstance(value,dict) else None
+        if not isinstance(value,str) or not value.strip():
+            raise ValueError('Invalid DATA folder setting: '+str(settings))
         return Path(value).expanduser().resolve()
     if getattr(sys, 'frozen', False):
-        return (config_base(env)/'ICSuite'/'DATA').resolve()
+        base = env.get('LOCALAPPDATA') or env.get('XDG_CONFIG_HOME') or str(Path.home()/'.config')
+        return (Path(base)/'ICSuite'/'DATA').resolve()
     return (Path(app_root).resolve().parent/'DATA').resolve()
 
 
@@ -48,7 +45,7 @@ def database_file(data):
 def save_directory(folder, environ=None):
     folder=Path(folder).expanduser().resolve()
     folder.mkdir(parents=True,exist_ok=True)
-    for name in ('db','models','pinouts','rules'):(folder/name).mkdir(exist_ok=True)
+    for name in ('models','pinouts'):(folder/name).mkdir(exist_ok=True)
     settings=location_file(environ);settings.parent.mkdir(parents=True,exist_ok=True)
     temp=settings.with_suffix('.tmp')
     with temp.open('w',encoding='utf-8') as handle:

@@ -1,9 +1,3 @@
-# 0.8.3-RC1
-
-- Canonical ICSuite shared DATA location preference, with legacy IC_Tools fallback.
-- Identical path resolution with ICOCR 0.8.9.9-RC1.
-- Deployment documentation for versioned DATA installers.
-
 # ICDB release notes
 
 All ICDB changes in one file, newest first. Earlier versions were released as separate RELEASE_x.md files.

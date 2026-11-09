@@ -1,12 +1,10 @@
-> Deployment paths and separate DATA installer: see [DEPLOYMENT_0_8_3.md](DEPLOYMENT_0_8_3.md).
-
-# ICDB 0.8.3-RC1 (beta)
+# ICDB 0.8.2-RC1 (beta)
 
 Integrated ICDB and ICPin with editable pinout groups, inline pin editing, continuous lists and expanded matching filters. One desktop application holds component records, editable pin definitions, source mappings, matching decisions and ICOCR image references.
 
 ## Start on Windows
 
-**Installer or portable build (recommended):** run `ICDB_0.8.3-RC1_Setup.exe`, or extract `ICDB_0.8.3-RC1_Portable.zip` and start `ICDB.exe`. No Python installation is needed.
+**Installer or portable build (recommended):** run `ICDB_0.8.2-RC1_Setup.exe`, or extract `ICDB_0.8.2-RC1_Portable.zip` and start `ICDB.exe`. No Python installation is needed.
 
 **From source:**
 
