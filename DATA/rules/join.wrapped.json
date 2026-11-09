@@ -4,6 +4,18 @@
   "name": "Join wrapped part-number lines",
   "category": "Joining",
   "enabled": true,
-  "kind": "switch",
-  "priority": 100
+  "kind": "wrapped_join",
+  "priority": 100,
+  "patterns": [
+    {
+      "first": "[A-Z]{2,8}[0-9]{1,6}",
+      "second": "[0-9]{1,4}[A-Z]{1,4}",
+      "exact_only": false
+    },
+    {
+      "first": "[A-Z]{2,8}",
+      "second": "[0-9]{3,6}",
+      "exact_only": true
+    }
+  ]
 }
