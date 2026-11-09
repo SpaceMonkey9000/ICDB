@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.hint_patterns.rule_12",
+  "name": "Xilinx programmable-logic naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 111,
+  "collection": "hint_patterns",
+  "rule": {
+    "id": "rule_12",
+    "label": "Xilinx programmable-logic naming pattern",
+    "pattern": "^XC(?:2C|2S|3S|4V|5V|6S|6V|7[AKSVZ]|9[5S]|KU|VU|ZU|18V|17)[A-Z0-9-]*$"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.strict_patterns.rule_11",
+  "name": "78/79 fixed regulator naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 110,
+  "collection": "strict_patterns",
+  "rule": {
+    "id": "rule_11",
+    "label": "78/79 fixed regulator naming pattern",
+    "pattern": "(?:L|UA|KA|AN|LM|MC|NJM|CJ|TA|NCV)?7[89](?:L|M|DL)?(?:0[5689]|1[0258]|2[04]|33)[A-Z]{0,3}"
+  }
+}

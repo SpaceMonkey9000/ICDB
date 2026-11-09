@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.strict_patterns.rule_9",
+  "name": "Darlington array naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 108,
+  "collection": "strict_patterns",
+  "rule": {
+    "id": "rule_9",
+    "label": "Darlington array naming pattern",
+    "pattern": "UL[NQ](?:200[1-4]|280[1-5])[A-Z]{0,3}"
+  }
+}

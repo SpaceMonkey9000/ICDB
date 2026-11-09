@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "id": "match.affixes",
+  "name": "Bounded prefix/suffix suggestions",
+  "category": "Matching",
+  "enabled": true,
+  "kind": "switch",
+  "priority": 100
+}

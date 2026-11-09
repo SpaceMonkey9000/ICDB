@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "id": "logic.aliases",
+  "name": "74-series abbreviations and package suffixes",
+  "category": "Matching",
+  "enabled": true,
+  "kind": "config",
+  "priority": 100,
+  "target": "rules/marking_aliases.json",
+  "config": {
+    "schema_version": 1,
+    "enabled": true,
+    "families": [
+      "HC",
+      "HCT"
+    ],
+    "suffixes": [
+      "D",
+      "N",
+      "PW"
+    ],
+    "abbreviations": true
+  }
+}

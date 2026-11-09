@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.hint_patterns.rule_11",
+  "name": "TI DSP/MCU naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 110,
+  "collection": "hint_patterns",
+  "rule": {
+    "id": "rule_11",
+    "label": "TI DSP/MCU naming pattern",
+    "pattern": "^(?:TMS320|TMS570|MSP430|TM4C)[A-Z0-9-]+$"
+  }
+}

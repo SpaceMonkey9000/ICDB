@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "family.spaced_patterns.join_8",
+  "name": "Join spaced 78/79 regulator names",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 107,
+  "collection": "spaced_patterns",
+  "rule": {
+    "id": "join_8",
+    "pattern": "^(?:(?:L|UA|KA|AN|LM|MC|NJM|CJ|TA|NCV)?\\s*7[89](?:L|M)?\\s*(?:0[5689]|1[0258]|2[04]|33)(?:\\s*[A-Z]{1,3})?)$"
+  }
+}

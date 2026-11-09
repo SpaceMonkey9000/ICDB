@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "family.spaced_patterns.join_9",
+  "name": "Join spaced CMOS 4000 names",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 108,
+  "collection": "spaced_patterns",
+  "rule": {
+    "id": "join_9",
+    "pattern": "^(?:(?:CD|HEF|HCF|MC1|TC)\\s*4[05]\\d{2,3}(?:\\s*[A-Z]{1,3})?)$"
+  }
+}

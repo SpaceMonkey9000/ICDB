@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "family.spaced_patterns.join_6",
+  "name": "Join spaced Darlington array names",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 105,
+  "collection": "spaced_patterns",
+  "rule": {
+    "id": "join_6",
+    "pattern": "^(?:UL[NQ]\\s*(?:200[1-4]|280[1-5])(?:\\s*[A-Z]{1,3})?)$"
+  }
+}

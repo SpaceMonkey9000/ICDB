@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "id": "match.separator_recovery",
+  "name": "Missing hyphens and spaces",
+  "category": "Matching",
+  "enabled": true,
+  "kind": "database_rule",
+  "priority": 100,
+  "recipe": "separators",
+  "values": []
+}

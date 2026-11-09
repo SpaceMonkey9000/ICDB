@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "id": "exclude.metadata",
+  "name": "Country, origin and metadata words",
+  "category": "Exclusions",
+  "enabled": true,
+  "kind": "config",
+  "priority": 100,
+  "target": "rules/negative_words.json",
+  "config": {
+    "schema_version": 1,
+    "_note": "Exact normalized words/phrases only. Origin phrases also combine with origin words. No substring or fuzzy exclusions.",
+    "origin_words": [
+      "AUSTRIA",
+      "CANADA",
+      "CHINA",
+      "COSTA",
+      "CZECH",
+      "FRANCE",
+      "GERMANY",
+      "HONG",
+      "HUNGARY",
+      "INDIA",
+      "INDONESIA",
+      "IRELAND",
+      "ISRAEL",
+      "ITALY",
+      "JAPAN",
+      "KONG",
+      "KOREA",
+      "MALAYSIA",
+      "MALTA",
+      "MEXICO",
+      "MOROCCO",
+      "PHILIPPINES",
+      "RICA",
+      "SINGAPORE",
+      "TAIWAN",
+      "THAILAND",
+      "USA",
+      "VIETNAM"
+    ],
+    "origin_phrases": [
+      "ASSEMBLED IN",
+      "MADE IN",
+      "PRODUCT OF"
+    ],
+    "extra_exact": []
+  }
+}

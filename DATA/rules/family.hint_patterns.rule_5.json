@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.hint_patterns.rule_5",
+  "name": "Motorola/Freescale MCU naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 104,
+  "collection": "hint_patterns",
+  "rule": {
+    "id": "rule_5",
+    "label": "Motorola/Freescale MCU naming pattern",
+    "pattern": "^MC(?:68HC|68HCP|9S08|9S12|56F)\\w+$"
+  }
+}

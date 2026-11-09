@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.hint_patterns.rule_2",
+  "name": "74/54-series logic",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 101,
+  "collection": "hint_patterns",
+  "rule": {
+    "id": "rule_2",
+    "label": "74/54-series logic",
+    "pattern": "^(?:SN)?(?:74|54)(?:[A-Z]{1,5})?\\d[A-Z0-9-]*$"
+  }
+}

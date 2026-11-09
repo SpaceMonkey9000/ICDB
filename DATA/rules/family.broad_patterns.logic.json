@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "family.broad_patterns.logic",
+  "name": "Broad logic-family syntax",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 100,
+  "collection": "broad_patterns",
+  "rule": {
+    "id": "logic",
+    "pattern": "(?:74|54)[A-Z]{1,5}\\d[A-Z0-9/.-]*"
+  }
+}

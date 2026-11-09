@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.hint_patterns.rule_10",
+  "name": "AVR naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 109,
+  "collection": "hint_patterns",
+  "rule": {
+    "id": "rule_10",
+    "label": "AVR naming pattern",
+    "pattern": "^AT(?:MEGA|TINY|XMEGA|90(?:CAN|PWM|USB|S))\\d[A-Z0-9-]*$"
+  }
+}

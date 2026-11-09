@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "id": "ranking.brands",
+  "name": "Manufacturer and logo words",
+  "category": "Ranking",
+  "enabled": true,
+  "kind": "config",
+  "priority": 100,
+  "target": "rules/brands.json",
+  "config": {
+    "_note": "Brand and logo words printed on IC packages. A line made only of these (or of letters only) counts as a logo line for line ranking. Add words as you meet them; case does not matter. Words shorter than three characters (TI, ST, ON) are dropped by the OCR token step, so listing them has no effect.",
+    "brands": {
+      "Analog Devices": [
+        "ADI",
+        "ANALOG"
+      ],
+      "Atmel": [
+        "ATMEL"
+      ],
+      "Diodes": [
+        "DIODES"
+      ],
+      "Fairchild": [
+        "FAIRCHILD"
+      ],
+      "Infineon": [
+        "INFINEON"
+      ],
+      "Intersil": [
+        "INTERSIL"
+      ],
+      "ISSI": [
+        "ISSI"
+      ],
+      "Etron": [
+        "ETRONTECH",
+        "ETRON"
+      ],
+      "Maxim": [
+        "DALLAS",
+        "MAXIM"
+      ],
+      "Microchip": [
+        "MICROCHIP"
+      ],
+      "Nexperia": [
+        "NEXPERIA"
+      ],
+      "NXP": [
+        "FREESCALE",
+        "MOTOROLA",
+        "NXP",
+        "PHILIPS"
+      ],
+      "onsemi": [
+        "ONSEMI"
+      ],
+      "Renesas": [
+        "RENESAS"
+      ],
+      "ROHM": [
+        "ROHM"
+      ],
+      "Samsung": [
+        "SAMSUNG",
+        "SEC"
+      ],
+      "Sipex": [
+        "SIPEX"
+      ],
+      "Toshiba": [
+        "TOSHIBA"
+      ],
+      "Vishay": [
+        "VISHAY"
+      ],
+      "Winbond": [
+        "WINBOND"
+      ],
+      "Texas Instruments": [
+        "TEXAS"
+      ],
+      "Linear Technology": [
+        "LINEAR"
+      ],
+      "Xilinx": [
+        "XILINX"
+      ],
+      "Altera": [
+        "ALTERA"
+      ],
+      "Lattice": [
+        "LATTICE"
+      ],
+      "Allegro": [
+        "ALLEGRO"
+      ],
+      "Broadcom": [
+        "AVAGO",
+        "BROADCOM"
+      ],
+      "Micrel": [
+        "MICREL"
+      ],
+      "Silicon Labs": [
+        "SILABS",
+        "SKYWORKS"
+      ],
+      "Exar": [
+        "EXAR"
+      ],
+      "Torex": [
+        "TOREX"
+      ],
+      "Melexis": [
+        "MELEXIS"
+      ],
+      "Rockchip": [
+        "ROCKCHIP"
+      ],
+      "Holtek": [
+        "HOLTEK"
+      ],
+      "National": [
+        "NATIONAL"
+      ],
+      "Micron": [
+        "MICRON"
+      ],
+      "Richtek": [
+        "RICHTEK"
+      ],
+      "IXYS": [
+        "IXYS"
+      ],
+      "International Rectifier": [
+        "IOR"
+      ],
+      "AMD": [
+        "AMD"
+      ],
+      "Harris": [
+        "HARRIS"
+      ],
+      "Burr-Brown": [
+        "BROWN",
+        "BURR"
+      ],
+      "STMicroelectronics": [
+        "SGS",
+        "THOMSON"
+      ],
+      "Cypress": [
+        "CYPRESS",
+        "SPANSION"
+      ],
+      "Macronix": [
+        "MACRONIX",
+        "MXIC"
+      ],
+      "GigaDevice": [
+        "GIGADEVICE"
+      ],
+      "Nuvoton": [
+        "NUVOTON"
+      ],
+      "Espressif": [
+        "ESPRESSIF"
+      ],
+      "NEC": [
+        "NEC"
+      ],
+      "Hitachi": [
+        "HITACHI"
+      ],
+      "Sanyo": [
+        "SANYO"
+      ],
+      "Sharp": [
+        "SHARP"
+      ],
+      "Zilog": [
+        "ZILOG"
+      ],
+      "Signetics": [
+        "SIGNETICS"
+      ]
+    },
+    "schema_version": 1
+  }
+}

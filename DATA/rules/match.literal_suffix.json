@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "id": "match.literal_suffix",
+  "name": "Printed part plus letter suffix",
+  "category": "Matching",
+  "enabled": true,
+  "kind": "switch",
+  "priority": 100
+}

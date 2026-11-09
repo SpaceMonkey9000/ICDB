@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.hint_patterns.rule_9",
+  "name": "PIC MCU naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 108,
+  "collection": "hint_patterns",
+  "rule": {
+    "id": "rule_9",
+    "label": "PIC MCU naming pattern",
+    "pattern": "^(?:DS)?PIC(?:1[0268]|24|30|32|33)[A-Z]{1,2}\\d[A-Z0-9/-]*$"
+  }
+}

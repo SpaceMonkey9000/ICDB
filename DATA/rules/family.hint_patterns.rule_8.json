@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.hint_patterns.rule_8",
+  "name": "MPC5 MCU naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 107,
+  "collection": "hint_patterns",
+  "rule": {
+    "id": "rule_8",
+    "label": "MPC5 MCU naming pattern",
+    "pattern": "^MPC5\\w+$"
+  }
+}

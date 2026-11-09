@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "id": "ranking.lines",
+  "name": "Context and geometry line ranking",
+  "category": "Ranking",
+  "enabled": true,
+  "kind": "config",
+  "priority": 100,
+  "target": "ranking/line_weights.json",
+  "config": {
+    "version": "20261005-143518",
+    "line_ranking_version": "1.0.0",
+    "fitted_on": {
+      "images": 133,
+      "positives": 119,
+      "predictions": [
+        "predictions.jsonl"
+      ],
+      "annotations": [
+        "annotations_v0_6_from_report.csv"
+      ],
+      "catalogue": 15062,
+      "l2": 0.03,
+      "wrong_cost": 3.0
+    },
+    "cross_validation": {
+      "correct": 70,
+      "wrong": 31,
+      "abstain": 32,
+      "negative_picks": 3
+    },
+    "bias": 0.0,
+    "weights": {
+      "first_coded_line": 0.7613,
+      "second_coded_line": 0.072,
+      "later_coded_line": -0.9681,
+      "not_in_block": -0.5094,
+      "below_logo": 0.3253,
+      "large_print": 0.5324,
+      "small_print": -0.1497,
+      "single_line_block": 0.2906,
+      "part_shape": 0.2754,
+      "stem_suffix": 0.6383,
+      "family_pattern": 0.9163,
+      "lot_shape": -0.8536,
+      "date_prefix": -0.908,
+      "numeric_only": 0.071,
+      "short_text": -0.0779,
+      "long_text": -0.118,
+      "one_letter_code": -0.2394,
+      "db_exact": 1.0,
+      "db_base": 1.0,
+      "db_suggestion": 1.1579,
+      "db_correction": 0.3,
+      "ocr_score": 1.277,
+      "multi_treatment": 0.0865,
+      "body_or_block_number": 0.9665,
+      "rule_choice": 1.1617,
+      "rule_eligible": 0.6229
+    },
+    "abstain_below": 3.9269,
+    "schema_version": 1,
+    "enabled": true,
+    "extended_min_score": 0.85
+  }
+}

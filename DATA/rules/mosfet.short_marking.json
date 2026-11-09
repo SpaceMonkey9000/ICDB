@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "id": "mosfet.short_marking",
+  "name": "Short MOSFET markings (50N06 etc.)",
+  "category": "Matching",
+  "enabled": true,
+  "kind": "prefix_candidates",
+  "priority": 100,
+  "pattern": "[0-9]{2,3}[NP][0-9]{2,3}",
+  "prefixes": [
+    "CS",
+    "DFP",
+    "FQA",
+    "FQP",
+    "FQPF",
+    "HFP",
+    "MTP",
+    "NTB",
+    "NTD",
+    "NTP",
+    "RFP"
+  ],
+  "suffixes": [
+    "",
+    "L",
+    "G"
+  ],
+  "ignore_trailing_hyphen": true
+}

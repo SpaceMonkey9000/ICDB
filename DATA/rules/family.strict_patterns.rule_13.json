@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.strict_patterns.rule_13",
+  "name": "Optocoupler naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 112,
+  "collection": "strict_patterns",
+  "rule": {
+    "id": "rule_13",
+    "label": "Optocoupler naming pattern",
+    "pattern": "(?:TLP\\d{3,4}|MOC\\d{4}|H11[A-Z]{1,2}\\d|FOD\\d{3,4}|[HA]CPL-?\\d{3,4}|LTV-?\\d{3,4}|[46]N\\d{2,3}|(?:PC|EL|KP)\\d{3,4}|CNY\\d{2}|PS\\d{4})[A-Z]{0,3}(?:-\\d)?"
+  }
+}

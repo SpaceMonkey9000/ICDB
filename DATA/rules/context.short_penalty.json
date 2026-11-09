@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "id": "context.short_penalty",
+  "name": "Short marking-block ranking penalty",
+  "category": "Context",
+  "enabled": true,
+  "kind": "switch",
+  "priority": 100
+}

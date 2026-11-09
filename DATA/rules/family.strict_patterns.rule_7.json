@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.strict_patterns.rule_7",
+  "name": "SP interface naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 106,
+  "collection": "strict_patterns",
+  "rule": {
+    "id": "rule_7",
+    "label": "SP interface naming pattern",
+    "pattern": "SP(?:232|3232|485|3485)[A-Z]{0,4}"
+  }
+}

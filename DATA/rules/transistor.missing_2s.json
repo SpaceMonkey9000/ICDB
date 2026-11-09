@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "id": "transistor.missing_2s",
+  "name": "Missing 2S transistor prefix",
+  "category": "Matching",
+  "enabled": true,
+  "kind": "database_rule",
+  "priority": 100,
+  "recipe": "transistor",
+  "values": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "J",
+    "K"
+  ]
+}

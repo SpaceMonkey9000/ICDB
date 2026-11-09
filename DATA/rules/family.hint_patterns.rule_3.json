@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.hint_patterns.rule_3",
+  "name": "HCF series",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 102,
+  "collection": "hint_patterns",
+  "rule": {
+    "id": "rule_3",
+    "label": "HCF series",
+    "pattern": "^HCF\\d[A-Z0-9-]*$"
+  }
+}

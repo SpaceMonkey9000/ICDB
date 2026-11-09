@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.strict_patterns.rule_8",
+  "name": "LA naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 107,
+  "collection": "strict_patterns",
+  "rule": {
+    "id": "rule_8",
+    "label": "LA naming pattern",
+    "pattern": "LA\\d{4,5}[A-Z]{0,3}"
+  }
+}

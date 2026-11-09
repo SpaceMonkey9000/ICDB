@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.hint_patterns.rule_4",
+  "name": "AD series",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 103,
+  "collection": "hint_patterns",
+  "rule": {
+    "id": "rule_4",
+    "label": "AD series",
+    "pattern": "^AD(?:A|G|C|S)?\\d[A-Z0-9-]*$"
+  }
+}

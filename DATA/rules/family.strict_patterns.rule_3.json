@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.strict_patterns.rule_3",
+  "name": "74/54 logic naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 102,
+  "collection": "strict_patterns",
+  "rule": {
+    "id": "rule_3",
+    "label": "74/54 logic naming pattern",
+    "pattern": "(?:SN|CD|MC|M|TC|HD|MM|DM|NLV|IDT)?(?:74|54)(?:LVHCT|ALVCH|CBTLV|AHCT|LVHC|ALVC|VHCT|LVCH|ALS|HCT|HCU|AHC|ACT|LVC|AVC|AUC|AUP|LVT|ABT|BCT|FCT|LCX|LVX|VHC|LVQ|CBT|LS|AS|HC|AC|LV|S|F|H|L)(?:[1-3]G)?\\d{1,5}[A-Z]{0,4}"
+  }
+}

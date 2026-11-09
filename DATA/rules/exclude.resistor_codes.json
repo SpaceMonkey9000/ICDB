@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "id": "exclude.resistor_codes",
+  "name": "Exclude resistor letter codes (4R7, 01C)",
+  "category": "Exclusions",
+  "enabled": true,
+  "kind": "switch",
+  "priority": 100
+}

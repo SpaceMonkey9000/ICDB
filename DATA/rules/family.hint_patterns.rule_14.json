@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.hint_patterns.rule_14",
+  "name": "Lattice programmable-logic naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 113,
+  "collection": "hint_patterns",
+  "rule": {
+    "id": "rule_14",
+    "label": "Lattice programmable-logic naming pattern",
+    "pattern": "^(?:LCMXO\\d?[A-Z]{0,2}|LC4\\d{3}|ISPLSI\\d{4}|M4A\\d)[A-Z0-9-]*$"
+  }
+}

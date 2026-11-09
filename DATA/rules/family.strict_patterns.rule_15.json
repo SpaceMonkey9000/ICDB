@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.strict_patterns.rule_15",
+  "name": "Triac/SCR naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 114,
+  "collection": "strict_patterns",
+  "rule": {
+    "id": "rule_15",
+    "label": "Triac/SCR naming pattern",
+    "pattern": "(?:BT[AB]\\d{2}|BT1[3-5]\\d|Z0[1-9]\\d{2}[A-Z]{2})(?:-\\d{3,4}[A-Z]{0,2})?"
+  }
+}

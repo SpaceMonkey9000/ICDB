@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "family.spaced_patterns.join_7",
+  "name": "Join spaced serial memory names",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 106,
+  "collection": "spaced_patterns",
+  "rule": {
+    "id": "join_7",
+    "pattern": "^(?:(?:AT)?(?:24|93)(?:C|LC|AA)\\s*\\d{2,4}(?:\\s*[A-Z]{1,3})?)$"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "id": "mosfet.database_stems",
+  "name": "Database-backed short MOSFET markings",
+  "category": "Matching",
+  "enabled": true,
+  "kind": "database_rule",
+  "priority": 100,
+  "recipe": "mosfet",
+  "values": []
+}

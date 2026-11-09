@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "family.spaced_patterns.join_1",
+  "name": "Join spaced 74/54 logic names",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 100,
+  "collection": "spaced_patterns",
+  "rule": {
+    "id": "join_1",
+    "pattern": "^(?:(?:SN\\s*)?(?:74|54)\\s*(?:LS|ALS|AS|F|HC|HCT|AHC|AHCT|AC|ACT|LVC|LV|LVHC|LVHCT|ALVC|AVC|AUC|LVT|ABT)(?:[124]G)?\\s*\\d{1,5}(?:\\s*[A-Z]{1,4})?)$"
+  }
+}

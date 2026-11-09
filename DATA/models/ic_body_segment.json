@@ -1,0 +1,60 @@
+{
+  "version": 3,
+  "task": "segment",
+  "model": "YOLOv8n segment",
+  "classes": [
+    "ic_body"
+  ],
+  "input_name": "images",
+  "input_shape": [
+    1,
+    3,
+    640,
+    640
+  ],
+  "preprocessing": "RGB; aspect-preserving letterbox to 640x640, fill=114; float32 /255; NCHW",
+  "output_names": [
+    "output0",
+    "output1"
+  ],
+  "output_shapes": [
+    [
+      1,
+      37,
+      8400
+    ],
+    [
+      1,
+      32,
+      160,
+      160
+    ]
+  ],
+  "output_shape": [
+    1,
+    37,
+    8400
+  ],
+  "output_layout": "batch, channels, candidates",
+  "channels": [
+    "center_x",
+    "center_y",
+    "width",
+    "height",
+    "ic_body_score",
+    "32 mask coefficients"
+  ],
+  "coordinates": "pixels in the 640x640 letterboxed image",
+  "objectness_channel": false,
+  "postprocessing": "Score threshold, box NMS, combine retained mask coefficients with prototypes, sigmoid and crop masks to boxes, resize masks and undo letterbox. Masks are outlines, not four predicted corners.",
+  "suggested_confidence": 0.35,
+  "suggested_nms_iou": 0.45,
+  "opset": 17,
+  "source_checkpoint": "C:\\Users\\Padraig Hickey\\Desktop\\ICSUITE_0_1_5\\DATA\\ic_package\\runs\\20261007_093352_a532f7\\detector\\weights\\best.pt",
+  "sha256": "77df3b260fb3df22fb17f2a3c077f754633503621ae7c0eea51de26ede3e5ce8",
+  "onnxruntime": "1.22.0",
+  "ultralytics": "8.3.200",
+  "max_abs_parity_error": 0.0002899169921875,
+  "accuracy_validated": false,
+  "icocr_integration": "Requires a matching task-specific adapter; no ICOCR changes are included"
+}

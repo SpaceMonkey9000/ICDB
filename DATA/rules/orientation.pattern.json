@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "id": "orientation.pattern",
+  "name": "Part-syntax reading-direction support",
+  "category": "Syntax",
+  "enabled": true,
+  "kind": "orientation",
+  "priority": 100,
+  "min_score": 0.85,
+  "max_score_gap": 0.12
+}

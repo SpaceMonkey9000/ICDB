@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "family.broad_patterns.memory",
+  "name": "Broad memory-family syntax",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 101,
+  "collection": "broad_patterns",
+  "rule": {
+    "id": "memory",
+    "pattern": "(?:24|25|27|28|29|39)[A-Z]{1,4}\\d[A-Z0-9/.-]*"
+  }
+}

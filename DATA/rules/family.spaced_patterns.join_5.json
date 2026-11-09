@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "family.spaced_patterns.join_5",
+  "name": "Join spaced LA names",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 104,
+  "collection": "spaced_patterns",
+  "rule": {
+    "id": "join_5",
+    "pattern": "^(?:LA\\s*\\d{4,5}(?:\\s*[A-Z]{1,3})?)$"
+  }
+}

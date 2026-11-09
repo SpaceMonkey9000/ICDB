@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "family.spaced_patterns.join_4",
+  "name": "Join spaced SP interface names",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 103,
+  "collection": "spaced_patterns",
+  "rule": {
+    "id": "join_4",
+    "pattern": "^(?:SP\\s*(?:232|3232|485|3485)(?:\\s*[A-Z]{1,4})?)$"
+  }
+}

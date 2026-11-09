@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.strict_patterns.rule_1",
+  "name": "DS device naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 100,
+  "collection": "strict_patterns",
+  "rule": {
+    "id": "rule_1",
+    "label": "DS device naming pattern",
+    "pattern": "DS(?:\\d{4}|18B20|18S20|1822|28EA00)[A-Z]{0,3}"
+  }
+}

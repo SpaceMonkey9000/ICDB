@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "family.spaced_patterns.join_2",
+  "name": "Join spaced LM names",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 101,
+  "collection": "spaced_patterns",
+  "rule": {
+    "id": "join_2",
+    "pattern": "^(?:LM(?:V|C)?\\s*\\d{3,5}(?:\\s*[A-Z]{1,4})?)$"
+  }
+}

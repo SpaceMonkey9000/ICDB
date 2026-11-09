@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.strict_patterns.rule_12",
+  "name": "CMOS 4000 logic naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 111,
+  "collection": "strict_patterns",
+  "rule": {
+    "id": "rule_12",
+    "label": "CMOS 4000 logic naming pattern",
+    "pattern": "(?:CD|HEF|HCF|MC1|TC)4[05]\\d{2,3}[A-Z]{0,3}"
+  }
+}

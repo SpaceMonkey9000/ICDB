@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "family.spaced_patterns.join_3",
+  "name": "Join spaced BTS/BTT/BTF names",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 102,
+  "collection": "spaced_patterns",
+  "rule": {
+    "id": "join_3",
+    "pattern": "^(?:BT[STF]\\s*\\d{3,5}(?:\\s*[A-Z]{1,3}\\d{0,2})?(?:-\\d[A-Z]{1,4})?)$"
+  }
+}

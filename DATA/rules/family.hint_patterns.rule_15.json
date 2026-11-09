@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.hint_patterns.rule_15",
+  "name": "Renesas RX/RL78 MCU naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 114,
+  "collection": "hint_patterns",
+  "rule": {
+    "id": "rule_15",
+    "label": "Renesas RX/RL78 MCU naming pattern",
+    "pattern": "^R5F[0-9A-Z]{4,}$"
+  }
+}

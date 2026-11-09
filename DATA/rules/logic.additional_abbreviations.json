@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "id": "logic.additional_abbreviations",
+  "name": "Additional 74-series abbreviations",
+  "category": "Matching",
+  "enabled": true,
+  "kind": "database_rule",
+  "priority": 100,
+  "recipe": "logic",
+  "values": [
+    "LS",
+    "ALS",
+    "F",
+    "AC",
+    "ACT",
+    "AHC",
+    "AHCT",
+    "LVC"
+  ]
+}

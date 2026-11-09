@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "family.broad_patterns.t_family",
+  "name": "Broad T-family syntax",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 102,
+  "collection": "broad_patterns",
+  "rule": {
+    "id": "t_family",
+    "pattern": "T\\d[A-Z]\\d[A-Z0-9/.-]*"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.hint_patterns.rule_13",
+  "name": "Altera/Intel programmable-logic naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 112,
+  "collection": "hint_patterns",
+  "rule": {
+    "id": "rule_13",
+    "label": "Altera/Intel programmable-logic naming pattern",
+    "pattern": "^(?:EP[1-4][A-Z]{1,3}\\d|EPM\\d|5C[A-Z]{2,3}|10M\\d|10CL\\d)[A-Z0-9-]*$"
+  }
+}

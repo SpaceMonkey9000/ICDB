@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.hint_patterns.rule_16",
+  "name": "NXP LPC / S32K MCU naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 115,
+  "collection": "hint_patterns",
+  "rule": {
+    "id": "rule_16",
+    "label": "NXP LPC / S32K MCU naming pattern",
+    "pattern": "^(?:LPC\\d{3,4}|S32K\\d{3})[A-Z0-9-]*$"
+  }
+}

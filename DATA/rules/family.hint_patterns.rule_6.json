@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.hint_patterns.rule_6",
+  "name": "Renesas MCU naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 105,
+  "collection": "hint_patterns",
+  "rule": {
+    "id": "rule_6",
+    "label": "Renesas MCU naming pattern",
+    "pattern": "^R7F70\\w+$"
+  }
+}

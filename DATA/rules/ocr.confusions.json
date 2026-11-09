@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "id": "ocr.confusions",
+  "name": "Bounded OCR character corrections",
+  "category": "OCR correction",
+  "enabled": true,
+  "kind": "config",
+  "priority": 100,
+  "target": "rules/ocr_confusions.json",
+  "config": {
+    "schema_version": 1,
+    "_note": "Pairs are bidirectional; costs are ranking heuristics. Fold classes are derived automatically. Suffix mappings require a listed pair. No insertions, deletions or arbitrary character replacements.",
+    "pairs": [
+      {
+        "chars": "0O",
+        "cost": 0.3
+      },
+      {
+        "chars": "1I",
+        "cost": 0.3
+      },
+      {
+        "chars": "1L",
+        "cost": 0.35
+      },
+      {
+        "chars": "5S",
+        "cost": 0.35
+      },
+      {
+        "chars": "0D",
+        "cost": 0.6
+      },
+      {
+        "chars": "8B",
+        "cost": 0.4
+      },
+      {
+        "chars": "2Z",
+        "cost": 0.4
+      },
+      {
+        "chars": "6G",
+        "cost": 0.5
+      },
+      {
+        "chars": "1T",
+        "cost": 0.5
+      },
+      {
+        "chars": "IT",
+        "cost": 0.5
+      },
+      {
+        "chars": "DO",
+        "cost": 0.4
+      },
+      {
+        "chars": "0Q",
+        "cost": 0.5
+      },
+      {
+        "chars": "OQ",
+        "cost": 0.5
+      },
+      {
+        "chars": "MN",
+        "cost": 0.45
+      },
+      {
+        "chars": "UV",
+        "cost": 0.5
+      },
+      {
+        "chars": "UW",
+        "cost": 0.5
+      },
+      {
+        "chars": "VW",
+        "cost": 0.5
+      },
+      {
+        "chars": "IL",
+        "cost": 0.45
+      }
+    ],
+    "suffix_letters": {
+      "0": "D",
+      "1": "I",
+      "5": "S",
+      "8": "B",
+      "2": "Z",
+      "6": "G"
+    },
+    "max_suffix": 3,
+    "edit_limits": [
+      {
+        "max_length": 5,
+        "max_edits": 1
+      },
+      {
+        "max_length": 8,
+        "max_edits": 2
+      },
+      {
+        "max_length": 24,
+        "max_edits": 3
+      }
+    ],
+    "base_max_cost": 0.6,
+    "extra_edit_cost": 0.35
+  }
+}

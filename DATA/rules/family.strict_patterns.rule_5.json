@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.strict_patterns.rule_5",
+  "name": "LM naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 104,
+  "collection": "strict_patterns",
+  "rule": {
+    "id": "rule_5",
+    "label": "LM naming pattern",
+    "pattern": "LM[A-Z]?\\d{3,5}[A-Z]{0,4}"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "family.contextual_costs.logic_t",
+  "name": "Lower OCR correction cost for logic-family T",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 100,
+  "collection": "contextual_costs",
+  "rule": {
+    "id": "logic_t",
+    "prefix_pattern": "(?:SN)?(?:74|54)(?:HC|AHC|AC)",
+    "to_char": "T",
+    "cost": 0.2
+  }
+}

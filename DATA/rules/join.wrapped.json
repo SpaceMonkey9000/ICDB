@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "id": "join.wrapped",
+  "name": "Join wrapped part-number lines",
+  "category": "Joining",
+  "enabled": true,
+  "kind": "switch",
+  "priority": 100
+}

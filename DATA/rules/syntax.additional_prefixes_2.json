@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "syntax.additional_prefixes_2",
+  "name": "Additional literal part prefixes (2)",
+  "category": "Syntax",
+  "enabled": true,
+  "kind": "database_rule",
+  "priority": 101,
+  "recipe": "prefix_hints",
+  "values": [
+    "VIPER",
+    "ATMEGA",
+    "ATTINY",
+    "DSPIC"
+  ]
+}

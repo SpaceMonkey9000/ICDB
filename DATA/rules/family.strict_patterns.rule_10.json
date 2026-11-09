@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.strict_patterns.rule_10",
+  "name": "Serial memory naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 109,
+  "collection": "strict_patterns",
+  "rule": {
+    "id": "rule_10",
+    "label": "Serial memory naming pattern",
+    "pattern": "(?:AT)?(?:24|93)(?:C|LC|AA)\\d{2,4}[A-Z]{0,3}"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.hint_patterns.rule_1",
+  "name": "LM series",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 100,
+  "collection": "hint_patterns",
+  "rule": {
+    "id": "rule_1",
+    "label": "LM series",
+    "pattern": "^LM[A-Z]?\\d[A-Z0-9-]*$"
+  }
+}

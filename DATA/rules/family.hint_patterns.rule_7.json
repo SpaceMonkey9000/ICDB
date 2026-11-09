@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.hint_patterns.rule_7",
+  "name": "Infineon MCU naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 106,
+  "collection": "hint_patterns",
+  "rule": {
+    "id": "rule_7",
+    "label": "Infineon MCU naming pattern",
+    "pattern": "^(?:SA[KFBLH]-)?(?:XC2\\d|TC2|TC3)\\w[\\w-]*$"
+  }
+}

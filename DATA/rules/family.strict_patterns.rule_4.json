@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "family.strict_patterns.rule_4",
+  "name": "BCP transistor naming pattern",
+  "category": "Device families",
+  "enabled": true,
+  "kind": "family",
+  "priority": 103,
+  "collection": "strict_patterns",
+  "rule": {
+    "id": "rule_4",
+    "label": "BCP transistor naming pattern",
+    "pattern": "BCP\\d{2,3}[A-Z]{0,2}(?:-\\d{2})?"
+  }
+}
