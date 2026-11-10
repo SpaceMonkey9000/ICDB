@@ -6,6 +6,7 @@ from PIL import ImageOps, ImageTk
 from pinout import diagram
 from pin_library import package_label, project
 from reference_images import load_reference_image
+from version import fit_window
 
 
 class ComponentPreview(ttk.LabelFrame):
@@ -17,6 +18,8 @@ class ComponentPreview(ttk.LabelFrame):
         self.canvas=tk.Canvas(self,bg='white',height=240,highlightthickness=0)
         self.canvas.pack(fill='both',expand=True,padx=4,pady=(0,4))
         self.canvas.bind('<Configure>',lambda e:self.draw())
+        self.canvas.bind('<Double-1>',self.open_large)
+        self.canvas.configure(cursor='hand2')
         self.message='Select a component to display its pinout.'
 
     def show(self,component_id):
@@ -53,6 +56,23 @@ class ComponentPreview(ttk.LabelFrame):
             self.message=''
         except Exception as exc:self.message='Pinout unavailable: '+str(exc)
         self.draw()
+
+    def open_large(self,event=None):
+        if not self.items or (self.scene is None and self.image is None):return 'break'
+        win=tk.Toplevel(self)
+        win.title('Pinout · '+self.items[self.choice.current()][1])
+        fit_window(win,1100,800,420,320)
+        win.resizable(True,True)
+        viewer=ComponentPreview(win,self.browser)
+        viewer.pack(fill='both',expand=True)
+        viewer.items=list(self.items)
+        viewer.choice.configure(values=[item[1] for item in viewer.items])
+        viewer.choice.current(self.choice.current())
+        viewer.canvas.unbind('<Double-1>')
+        viewer.canvas.configure(cursor='')
+        viewer.load()
+        win.bind('<Escape>',lambda e:win.destroy())
+        return 'break'
 
     def draw(self):
         self.canvas.delete('all')

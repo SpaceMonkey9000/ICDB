@@ -51,7 +51,11 @@ class Workbench:
         self.browser.workbench = self
         self.build_library(); self.build_matching(); self.build_import()
         self.status = tk.StringVar(value='Ready')
-        ttk.Label(root,textvariable=self.status,padding=(10,5)).pack(side='bottom',fill='x',before=self.tabs)
+        footer = ttk.Frame(root)
+        footer.pack(side='bottom',fill='x',before=self.tabs)
+        from database_version import DatabaseVersionLabel
+        DatabaseVersionLabel(footer,self.browser.db).pack(side='right')
+        ttk.Label(footer,textvariable=self.status,padding=(10,5)).pack(side='left',fill='x',expand=True)
         root.protocol('WM_DELETE_WINDOW',self.close)
         self.refresh_library(); self.refresh_matches()
         self.tabs.bind('<<NotebookTabChanged>>',self.tab_changed)

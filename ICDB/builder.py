@@ -64,6 +64,8 @@ def connect(path, timeout=BUSY_TIMEOUT_SECONDS):
     for table in ('components', 'entries'):
         if 'function' not in {r['name'] for r in db.execute('PRAGMA table_info('+table+')')}:
             db.execute('ALTER TABLE '+table+" ADD COLUMN function TEXT NOT NULL DEFAULT ''")
+    from database_version import install
+    install(db)
     db.commit()
     return db
 

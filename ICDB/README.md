@@ -1,14 +1,14 @@
-# ICDB 0.8.2-RC1 (beta)
+# ICDB 0.8.5-RC1 (beta)
 
 Integrated ICDB and ICPin with editable pinout groups, inline pin editing, continuous lists and expanded matching filters. One desktop application holds component records, editable pin definitions, source mappings, matching decisions and ICOCR image references.
 
 ## Start on Windows
 
-**Installer or portable build (recommended):** run `ICDB_0.8.2-RC1_Setup.exe`, or extract `ICDB_0.8.2-RC1_Portable.zip` and start `ICDB.exe`. No Python installation is needed.
+**Installer or portable build (recommended):** run `ICDB_0.8.5-RC1_Setup.exe`, or extract `ICDB_0.8.5-RC1_Portable.zip` and start `ICDB.exe`. No Python installation is needed.
 
 **From source:**
 
-1. Extract the entire `ICDB_0_8_2_RC1` folder.
+1. Extract the entire `ICDB_0_8_5_RC1` folder.
 2. Use Python 3.10+ and install dependencies: `py -3 -m pip install -r requirements.txt`
 3. Run `run_ICDB_windows.bat`.
 
@@ -17,6 +17,16 @@ Then check the DATA path on the Components tab. **Choose DATA folder** selects a
 The tables live inside `components.sqlite`. The application makes a database backup under `DATA/backups` before its first 0.7 migration. Existing components and manual images are retained. New source imports do not generate images.
 
 This is a beta release candidate. Please report problems together with the version shown in the window title.
+
+## Database version and enlarged pinouts
+
+The bottom status bar shows the database's own version on every tab, independently of the application version in the title. The DATA builder stamps its installer version (by default the build date, e.g. **20261110**) inside the packaged database. Saved content changes append an increasing suffix: **20261110-r1**, **20261110-r2**, etc. The metadata travels with `components.sqlite` and survives restarts. Each newly built DATA release starts at revision zero; only the staged database is reset, never the source database.
+
+For legacy databases without embedded version metadata, ICDB uses the installer's `data-pack-installed.json` **database_version** when available. It does not use `last_pack_version`, the current date or file timestamps, because those may belong to an asset-only update or a copied file. Without reliable provenance the base displays **Unversioned** until it is packaged by the updated builder.
+
+The suffix counts changed content records, including components, descriptions, pinout definitions, imported source records, matching decisions and published image references. One import or action can change multiple records and increase the suffix by more than one. Reads, searches, unchanged updates, scan caches, UI settings and undo history do not increment it. Failed/rolled-back transactions do not retain their increments. Tracking applies to existing tables after ICDB initializes their schema; it does not reconstruct earlier edit history.
+
+Double-click the pinout preview or a cell in the Components **Pinout** column to open a larger window. Resize or maximize it to scale the diagram; choose another linked package from the dropdown. Press Escape to close it. The window shows a snapshot of the linked pinouts when opened; reopen it after editing a definition.
 
 ## First workflow
 

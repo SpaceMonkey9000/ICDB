@@ -67,6 +67,9 @@ class Browser:
         for sequence in ('<MouseWheel>','<Button-4>','<Button-5>'):
             self.tree.bind(sequence,self.finish_before_navigation,add='+')
         self.status=tk.StringVar();ttk.Label(root,textvariable=self.status,padding=10).pack(fill='x')
+        if parent is None:
+            from database_version import DatabaseVersionLabel
+            DatabaseVersionLabel(root,self.db).pack(fill='x')
         self.refresh();self.root.protocol('WM_DELETE_WINDOW',self.close)
     def snapshot(self):
         # data_version changes on commits by other connections; total_changes counts this connection's writes.
@@ -162,7 +165,11 @@ class Browser:
         row=self.tree.identify_row(event.y);col=self.tree.identify_column(event.x)
         if row and col:
             self.tree.selection_set(row)
-            self.start_cell(row,self.tree['columns'][int(col[1:])-1])
+            column=self.tree['columns'][int(col[1:])-1]
+            if column=='pinout':
+                self.details()
+                self.pinout_preview.open_large()
+            else:self.start_cell(row,column)
         return 'break'
 
     def edit_device(self):

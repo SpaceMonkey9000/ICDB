@@ -2,6 +2,16 @@
 
 All ICDB changes in one file, newest first. Earlier versions were released as separate RELEASE_x.md files.
 
+## ICDB 0.8.5-RC1
+
+- Database base version now comes from the DATA installer build stamp, e.g. 20261110, followed by -rN after saved changes. Legacy installed databases can recover their original release from the installer's active-database state; unknown provenance displays Unversioned.
+
+## ICDB 0.8.4-RC1
+
+- Persistent database version in the bottom status bar across every tab, separate from the application version. Databases without metadata start at 1.0; SQLite content triggers append an increasing -rN suffix when records change, including worker/import writes. Rollbacks and unchanged updates preserve the previous version.
+- Double-click the component pinout preview or Pinout column to open a larger, resizable viewer with package selection and automatic diagram scaling.
+- Matching and ICOCR publication retain their existing behavior.
+
 ## ICDB 0.8.2-RC1 (beta release candidate)
 
 First public beta release candidate. Functionally identical to 0.8.2; packaging only:

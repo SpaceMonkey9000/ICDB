@@ -196,6 +196,8 @@ class Library:
             except sqlite3.OperationalError as exc:
                 if 'duplicate column' not in str(exc): raise
         self.db.create_function('icdb_search', 4, search_match, deterministic=True)
+        from database_version import install
+        with self.db: install(self.db)
         self.migrate_legacy()
 
     def _transaction(self):

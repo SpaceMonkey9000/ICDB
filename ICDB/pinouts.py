@@ -46,6 +46,8 @@ def migrate(db, root):
     db.executescript(MATCH_SCHEMA)
     with db:
         migrate_package_labels(db)
+        from database_version import install
+        install(db)
 
 
 def package_name(value):
