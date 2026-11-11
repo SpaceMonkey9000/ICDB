@@ -33,21 +33,18 @@ class Browser:
         self.search=tk.StringVar();entry=ttk.Entry(bar,textvariable=self.search,width=35);entry.pack(side='left',padx=5);entry.bind('<Return>',lambda e:self.refresh())
         ttk.Button(bar,text='Search',command=self.refresh).pack(side='left')
         ttk.Button(bar,text='Import CSV',command=self.import_source).pack(side='left',padx=5)
-        ttk.Button(bar,text='Check duplicates',command=self.check_duplicates).pack(side='left',padx=5)
         ttk.Button(bar,text='Export tables',command=self.export).pack(side='left')
-        ttk.Button(bar,text='Image references',command=self.open_pinouts).pack(side='left',padx=8)
         editbar=ttk.Frame(root,padding=(10,0));editbar.pack(fill='x')
         ttk.Button(editbar,text='Add device…',command=self.add_device).pack(side='left')
-        ttk.Button(editbar,text='Edit selected cell',command=self.edit_device).pack(side='left',padx=5)
         ttk.Button(editbar,text='Delete selected devices…',command=self.delete_devices).pack(side='left',padx=5)
         ttk.Label(editbar,text='Search: * = any characters; ? = one character').pack(side='left',padx=12)
         ttk.Button(editbar,text='Edit / link pinout',command=lambda:getattr(self,'workbench',None) and self.workbench.edit_component_pinout()).pack(side='left',padx=5)
         ttk.Button(editbar,text='Search datasheet',command=self.search_datasheet).pack(side='left',padx=5)
-        self.review=tk.BooleanVar();ttk.Checkbutton(root,text='Show review entries and generic profiles',variable=self.review,command=self.refresh).pack(anchor='w',padx=10)
+        self.review=tk.BooleanVar(value=False)
         body=ttk.Panedwindow(root,orient='vertical');body.pack(fill='both',expand=True,padx=10,pady=6)
         frame=ttk.Frame(body);body.add(frame,weight=3)
-        self.tree=ttk.Treeview(frame,columns=('part','function','manufacturer','pinout','status'),show='headings')
-        for c,title,width in [('part','Part / proposed text',240),('function','Function',300),('manufacturer','Manufacturer / group',160),('pinout','Pinout',280),('status','Evidence',300)]:
+        self.tree=ttk.Treeview(frame,columns=('part','function','manufacturer','pinout'),show='headings')
+        for c,title,width in [('part','Part / proposed text',240),('function','Function',300),('manufacturer','Manufacturer / group',160),('pinout','Pinout',280)]:
             self.tree.heading(c,text=title);self.tree.column(c,width=width)
         enable_sorting(self.tree)
         scroll=ttk.Scrollbar(frame,orient='vertical',command=lambda *args:self.scroll_table('y',*args));self.tree.configure(yscrollcommand=scroll.set)
@@ -95,7 +92,7 @@ class Browser:
         manufacturers={r[0]:r[1] for r in self.db.execute("SELECT id,manufacturer FROM components")}
         count=0
         for row in rows:
-            self.tree.insert('', 'end',iid=str(row[0]),values=(row[1],row[2],manufacturers.get(row[3],''),pinouts.get(row[3],''),row[4]));count+=1
+            self.tree.insert('', 'end',iid=str(row[0]),values=(row[1],row[2],manufacturers.get(row[3],''),pinouts.get(row[3],'')));count+=1
         sort_table(self.tree)
         s=summary(self.db);self.status.set(f"{s['components']:,} catalogue records • {count} displayed • {len(s['count_mismatches'])} source-section count mismatches; see exports/summary.json")
         self.text.delete('1.0','end');self.text.insert('end','Select a record for source evidence. A support-list entry does not confirm chip identity, equivalence, or a complete ordering number.')

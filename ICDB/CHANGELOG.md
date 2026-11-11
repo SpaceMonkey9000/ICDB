@@ -2,6 +2,13 @@
 
 All ICDB changes in one file, newest first. Earlier versions were released as separate RELEASE_x.md files.
 
+## ICDB 0.8.6
+
+- Cleaned up the Components tab: removed Edit selected cell, Check duplicates, Show review entries and generic profiles, and the Image references tool button.
+- Removed the Evidence column from the component list. Source details and existing image associations are retained.
+- Inline editing remains available by double-clicking a part, function or manufacturer cell, or using F2/Enter.
+- Matching and Import are unchanged; their overhaul is planned for the next update.
+
 ## ICDB 0.8.5-RC1
 
 - Database base version now comes from the DATA installer build stamp, e.g. 20261110, followed by -rN after saved changes. Legacy installed databases can recover their original release from the installer's active-database state; unknown provenance displays Unversioned.

@@ -1,14 +1,14 @@
-# ICDB 0.8.5-RC1 (beta)
+# ICDB 0.8.6 (beta)
 
 Integrated ICDB and ICPin with editable pinout groups, inline pin editing, continuous lists and expanded matching filters. One desktop application holds component records, editable pin definitions, source mappings, matching decisions and ICOCR image references.
 
 ## Start on Windows
 
-**Installer or portable build (recommended):** run `ICDB_0.8.5-RC1_Setup.exe`, or extract `ICDB_0.8.5-RC1_Portable.zip` and start `ICDB.exe`. No Python installation is needed.
+**Installer or portable build (recommended):** run `ICDB_0.8.6_Setup.exe`, or extract `ICDB_0.8.6_Portable.zip` and start `ICDB.exe`. No Python installation is needed.
 
 **From source:**
 
-1. Extract the entire `ICDB_0_8_5_RC1` folder.
+1. Extract `ICDB_0.8.6.zip` into its own folder.
 2. Use Python 3.10+ and install dependencies: `py -3 -m pip install -r requirements.txt`
 3. Run `run_ICDB_windows.bat`.
 
@@ -16,7 +16,9 @@ Then check the DATA path on the Components tab. **Choose DATA folder** selects a
 
 The tables live inside `components.sqlite`. The application makes a database backup under `DATA/backups` before its first 0.7 migration. Existing components and manual images are retained. New source imports do not generate images.
 
-This is a beta release candidate. Please report problems together with the version shown in the window title.
+This is a beta release. Please report problems together with the version shown in the window title.
+
+The Components tab shows catalogue devices with Part, Function, Manufacturer and Pinout columns. Double-click a part, function or manufacturer cell to edit it; F2/Enter also starts editing. The Edit selected cell and Check duplicates buttons, review-entry checkbox, Image references tool button and Evidence column have been removed. Source details remain below the list. Matching and Import retain their existing behavior in this release.
 
 ## Database version and enlarged pinouts
 
@@ -97,7 +99,7 @@ Rejections survive unchanged scans and reimports. Changed evidence can reopen a 
 
 Publishing writes complete SVG revisions before committing link changes. A rendering failure leaves the prior published links intact. Unchanged accepted diagrams skip rendering. Rejecting a previously published link removes that managed association on the next publish. Historical SVG revisions remain on disk for recovery; automatic garbage collection is not included.
 
-**Image references** remains available for manual photos/scans and default-image selection. Generated pinouts are edited and linked through the native library/matching workflow. Old bundle-import/review buttons are hidden in the integrated application.
+The legacy **Image references** tool is no longer exposed in the main window. Existing manual photos/scans and image associations remain intact. Generated pinouts are edited and linked through the native library/matching workflow.
 
 ## Upgrade scope
 
