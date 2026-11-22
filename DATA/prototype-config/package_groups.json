@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "minimum_confidence": 0.85,
+  "minimum_margin": 0.20,
+  "groups": {
+    "SOP": {
+      "description": "Two-sided package layout; exact pitch, mounting and pin count unresolved",
+      "families": ["SOP", "SOIC", "SO", "SSOP", "TSSOP", "MSOP", "QSOP", "TSOP", "VSOP", "HSOP", "HTSSOP", "HVSSOP", "VSSOP", "PowerSO", "DIP", "PDIP", "SDIP", "CDIP", "CERDIP"]
+    },
+    "QF": {
+      "description": "Four-sided package layout; exact outline and pin count unresolved",
+      "families": ["QFP", "LQFP", "TQFP", "VQFP", "PQFP", "FQFP", "HQFP", "CQFP", "QFN", "VQFN", "WQFN", "TQFN", "UQFN", "HVQFN", "PLCC", "LCC", "CLCC"]
+    },
+    "TO": {
+      "description": "Power/tab package layout represented by the TO training group",
+      "families": ["TO220", "TO247", "TO251", "TO252", "TO262", "TO263", "TO264", "TO3P", "DPAK", "D2PAK", "D3PAK", "IPAK", "SOT223", "SOT89"]
+    }
+  },
+  "overrides": {},
+  "note": "Grouping describes layout compatibility, not exact package recognition. DIP/SOP, QFP/QFN and individual TO variants remain distinct references. BGA/CSP, DFN and small SOT packages have no automatic group. Override keys are normalized full package names and values are SOP, QF, TO, or null to exclude."
+}

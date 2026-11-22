@@ -1,0 +1,34 @@
+{
+  "body_enabled": true,
+  "body_model": "C:\\Users\\user\\Desktop\\ICDB_ICOCR_Marking_Alias_Prototype\\DATA\\models\\ic_body_segment.onnx",
+  "body_only_enabled": false,
+  "camera_backend": "DirectShow",
+  "camera_mode": "1920x1080 @30",
+  "capture_folder": "C:\\Users\\user\\Desktop\\ICDB_ICOCR_Marking_Alias_Prototype\\DATA\\captures",
+  "fast_enabled": true,
+  "icdb_installation": "C:\\Users\\user\\Desktop\\ICDB_ICOCR_Marking_Alias_Prototype\\ICDB",
+  "invert_svg_pinouts": false,
+  "live_recognition": false,
+  "models_directory": "C:\\Users\\user\\Desktop\\ICDB_ICOCR_Marking_Alias_Prototype\\DATA\\models",
+  "multi_enabled": true,
+  "overlay_enabled": true,
+  "package_enabled": true,
+  "package_model": null,
+  "peak_colour": "Red",
+  "peak_opacity": "75%",
+  "peak_sensitivity": "Medium",
+  "peaking_enabled": false,
+  "show_all": false,
+  "sleep_enabled": true,
+  "sleep_seconds": 120,
+  "targeted_enabled": true,
+  "theme": "dark",
+  "window_size": [
+    1920,
+    1009
+  ],
+  "workspace_sizes": [
+    1333,
+    560
+  ]
+}
