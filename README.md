@@ -2,6 +2,8 @@
 
 Component information and pinouts, in one place.
 
+UI Update & aliases Prototype
+
 ICDB is a Windows app for browsing electronic components, keeping track of what they do, and building a library of pinout references. Search for a part, check its description, and view the available pinouts alongside it.
 
 It’s the database side of ICSuite, and the companion to [ICOCR](https://github.com/SpaceMonkey9000/ICOCR). ICOCR reads markings from a camera or photo; ICDB is where you maintain the component information and references behind those lookups. You can also use ICDB on its own.
