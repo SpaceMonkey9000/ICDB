@@ -26,7 +26,7 @@ The pinout editor keeps the pin table, package preview, and linked components in
 
 This also gives you somewhere to record package differences, exposed-pad connections, and source details instead of leaving them scattered across notes.
 
-![ICDB pinout editor showing an LM317, its pin table, package diagram, and linked components](images/pinout_editor.JPG)
+![ICDB pinout editor showing an 74AHC132, its pin table, package diagram, and linked components](images/pinout_editor.JPG)
 
 ## Working with ICOCR
 
