@@ -308,21 +308,6 @@ def record_trust(items, trusted):
     temp.write_text(json.dumps(state, indent=2), 'utf-8'); temp.replace(target)
 
 
-def confirm_site_rules(data_root, parent=None):
-    """Ask once per new/changed site rule file. Returns False if the user cancels the run."""
-    items = undecided_site_rules(data_root)
-    if not items: return True
-    from tkinter import messagebox
-    names = '\n'.join(f'  {p.name}  (SHA-256 {sha[:12]}…)' for p, sha in items[:15])
-    answer = messagebox.askyesnocancel('Site match rules',
-        f'{len(items)} match rule file(s) in the shared DATA folder are new or changed:\n\n{names}\n\n'
-        'Match rules are Python programs and run with your Windows permissions. Only trust them if you know who wrote them.\n\n'
-        'Yes: trust these exact files on this computer.\nNo: run without them.\nCancel: do not run.', parent=parent)
-    if answer is None: return False
-    record_trust(items, bool(answer))
-    return True
-
-
 def _register_shipped_helpers():
     """Shipped rules import _shipped_helpers by name; provide it without putting any folder on sys.path."""
     if '_shipped_helpers' in sys.modules: return

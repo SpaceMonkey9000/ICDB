@@ -1,4 +1,7 @@
-"""Shared application leases and exclusive updater lease on the DATA folder."""
+"""Shared application leases and exclusive updater lease on the DATA folder.
+
+This file is shared: ICDB and ICOCR each ship a copy, and the two copies must
+stay byte-identical (tools/check_shared_files.py checks this)."""
 import os
 from pathlib import Path
 

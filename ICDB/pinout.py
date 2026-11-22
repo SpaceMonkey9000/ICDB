@@ -10,7 +10,7 @@ import os
 from html import escape
 
 # Renderer version: bump whenever drawn output changes (publish caches key on it).
-VERSION = '0.8.2'
+VERSION = '0.8.3'
 PACKAGES = ('DIP', 'SOIC', 'MSOP', 'TSSOP', 'SSOP', 'TSOP-I', 'TSOP-II', 'PLCC', 'PowerSO20', 'QFP', 'QFN', 'DFN', 'TO-220', 'TO-252', 'SOT-89', 'TO-247', 'TO-263', 'TO-263AB', 'SOT-223')
 EXPOSED_PAD_PACKAGES = ('SOIC', 'MSOP', 'SSOP', 'TSSOP', 'QFP', 'QFN', 'DFN', 'PowerSO20')
 MAX_PINS = 256
@@ -525,7 +525,12 @@ def leadless_quad_diagram(project):
         side,row=divmod(pin.number-1,n)
         if not quad:
             # Vertical DFN, pin 1 at upper left, counter-clockwise (top view).
-            x,y,dx,dy=(left,top+end+row*pitch,-1,0) if side==0 else (right,bottom-end-row*pitch,1,0)
+            # Center both banks even when the minimum body height adds space.
+            first_y = top + (bh - (n-1)*pitch)/2
+            if side == 0:
+                x,y,dx,dy = left,first_y+row*pitch,-1,0
+            else:
+                x,y,dx,dy = right,first_y+(n-1-row)*pitch,1,0
         elif side==0: x,y,dx,dy=left,top+end+row*pitch,-1,0
         elif side==1: x,y,dx,dy=left+end+row*pitch,bottom,0,1
         elif side==2: x,y,dx,dy=right,bottom-end-row*pitch,1,0

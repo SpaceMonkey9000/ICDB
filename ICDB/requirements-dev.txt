@@ -1,0 +1,2 @@
+-r requirements-qt.txt
+pytest>=8

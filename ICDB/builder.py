@@ -1,4 +1,5 @@
 """Offline component catalogue builder. Python standard library only."""
+from contextlib import nullcontext
 import argparse, csv, functools, hashlib, io, json, re, sqlite3
 from pathlib import Path
 from datetime import datetime, timezone
@@ -61,6 +62,8 @@ def connect(path, timeout=BUSY_TIMEOUT_SECONDS):
     # Only the ESCAPE form (used with search_pattern) is replaced; plain LIKE stays native.
     db.create_function('like', 3, unicode_like, deterministic=True)
     db.executescript(SCHEMA)
+    from marking_aliases import SCHEMA as ALIAS_SCHEMA
+    db.execute(ALIAS_SCHEMA)
     for table in ('components', 'entries'):
         if 'function' not in {r['name'] for r in db.execute('PRAGMA table_info('+table+')')}:
             db.execute('ALTER TABLE '+table+" ADD COLUMN function TEXT NOT NULL DEFAULT ''")
@@ -111,14 +114,29 @@ def check_duplicates(db):
         'repeated_source_groups': [rows for rows in evidence.values() if len(rows) > 1]}
 
 
-def import_file(db, path, fmt='csv', replace_duplicates=False):
-    """Import a complete, validated two-column CSV in one transaction."""
+def csv_selection_digest(digest, excluded_lines):
+    if not excluded_lines:
+        return digest
+    return hashlib.sha256(json.dumps([digest, sorted(excluded_lines)]).encode()).hexdigest()
+
+
+def import_file(db, path, fmt='csv', replace_duplicates=False, expected_sha256=None, *, locked=False, excluded_lines=()):
+    """Import a complete, validated two-column CSV in one transaction.
+
+    expected_sha256: refuse the import if the file no longer matches what was previewed.
+    locked: the caller owns the transaction and controls commit or rollback."""
+    if locked and not db.in_transaction:
+        raise RuntimeError('CSV writes require caller-owned SQLite transaction')
     if fmt != 'csv':
         raise ValueError('Only two-column CSV imports are supported.')
     path = Path(path)
     data = path.read_bytes()
     digest = hashlib.sha256(data).hexdigest()
-    if not replace_duplicates and db.execute('SELECT 1 FROM sources WHERE sha256=?', (digest,)).fetchone():
+    if expected_sha256 is not None and digest != expected_sha256:
+        raise ValueError('The CSV file changed after it was previewed. Choose it again to refresh the preview.')
+    source_digest = csv_selection_digest(digest, excluded_lines)
+    if not replace_duplicates and db.execute(
+            'SELECT 1 FROM sources WHERE sha256 IN (?, ?)', (digest, source_digest)).fetchone():
         return {'source': path.name, 'already_imported': True}
     text = data.decode('utf-8-sig')
     # Match csv.reader's line breaks (\r\n, \r, \n only); str.splitlines() also splits on
@@ -152,7 +170,7 @@ def import_file(db, path, fmt='csv', replace_duplicates=False):
                 raise ValueError(f'Line {start}: expected 2 columns, found {len(row)}. Quote functions containing commas.')
             part, function = (cell.strip() for cell in row)
             header = (re.sub(r'[ _-]', '', part.lower()), function.lower())
-            if first and header in {('partnumber', 'function'), ('part', 'function')}:
+            if first and header in {('partnumber', 'function'), ('part', 'function'), ('partnumber', 'description'), ('part', 'description')}:
                 first = False
                 continue
             first = False
@@ -160,16 +178,17 @@ def import_file(db, path, fmt='csv', replace_duplicates=False):
                 raise ValueError(f'Line {start}: part number and function must both be non-empty.')
             if any(c in part for c in '\r\n\x00') or '\x00' in function:
                 raise ValueError(f'Line {start}: invalid control character.')
-            records.append((start, '\n'.join(lines[start-1:reader.line_num]), part.upper(), function))
+            if start not in excluded_lines:
+                records.append((start, '\n'.join(lines[start-1:reader.line_num]), part.upper(), function))
     except csv.Error as exc:
         raise ValueError(f'Invalid CSV near line {reader.line_num}: {exc}') from exc
     if not records:
         raise ValueError('CSV contains no component rows.')
     report = {'source': path.name, 'rows': len(records), 'entries': 0,
               'skipped_duplicates': 0, 'replaced_duplicates': 0, 'function_conflicts': 0, 'duplicates': []}
-    with db:
-        # Lock the write transaction before checking identities.
-        db.execute('BEGIN IMMEDIATE')
+    with nullcontext() if locked else db:
+        if not locked:
+            db.execute('BEGIN IMMEDIATE')
         existing = {}
         for row in db.execute('SELECT id,part_number,function FROM components ORDER BY id'):
             existing.setdefault(part_key(row['part_number']), []).append(dict(row))
@@ -236,8 +255,9 @@ def import_file(db, path, fmt='csv', replace_duplicates=False):
                 accepted.append((line, raw, part, function))
             seen.setdefault(key, (line, function))
         sid = db.execute('INSERT INTO sources(name,format,sha256,metadata,imported_at) VALUES(?,?,?,?,?)',
-            (path.name, 'csv', digest, json.dumps({'parser_version':'0.3', 'source_claim_only':True,
-                'duplicate_report': report['duplicates']}), datetime.now(timezone.utc).isoformat())).lastrowid
+            (path.name, 'csv', source_digest, json.dumps({'parser_version':'0.3', 'source_claim_only':True,
+                'duplicate_report': report['duplicates'],
+                **({'original_sha256': digest, 'excluded_lines': sorted(excluded_lines)} if excluded_lines else {})}), datetime.now(timezone.utc).isoformat())).lastrowid
         db.executemany('INSERT INTO source_lines VALUES(?,?,?)', ((sid,i,l) for i,l in enumerate(lines,1)))
         for line, raw, part, function in accepted:
             cid = db.execute('INSERT INTO components(part_number,manufacturer,family_hint,function) VALUES(?,?,?,?)',
@@ -311,15 +331,16 @@ def update_device(db, cid, part, function='', manufacturer=''):
 
 def delete_devices(db, ids):
     """Remove devices, their evidence entries and links, retaining source archives/images."""
+    ids = [(cid,) for cid in set(map(int, ids))]
     with db:
-        for cid in set(map(int, ids)):
-            if db.execute("SELECT 1 FROM sqlite_master WHERE name='pinout_links'").fetchone():
-                db.execute('DELETE FROM pinout_links WHERE component_id=?', (cid,))
-            # Component ids can be reused; an old match decision must not apply to a new part.
-            if db.execute("SELECT 1 FROM sqlite_master WHERE name='pinout_match_decisions'").fetchone():
-                db.execute('DELETE FROM pinout_match_decisions WHERE component_id=?', (cid,))
-            db.execute('DELETE FROM entries WHERE component_id=?', (cid,))
-            db.execute('DELETE FROM components WHERE id=?', (cid,))
+        tables = {r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+        if 'pinout_links' in tables:
+            db.executemany('DELETE FROM pinout_links WHERE component_id=?', ids)
+        # Component ids can be reused; an old match decision must not apply to a new part.
+        if 'pinout_match_decisions' in tables:
+            db.executemany('DELETE FROM pinout_match_decisions WHERE component_id=?', ids)
+        db.executemany('DELETE FROM entries WHERE component_id=?', ids)
+        db.executemany('DELETE FROM components WHERE id=?', ids)
 
 
 def main():

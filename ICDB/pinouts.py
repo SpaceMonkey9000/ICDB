@@ -6,7 +6,7 @@ import os
 import re
 import shutil
 import sqlite3
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from PIL import Image
 from reference_images import reference_suffix
 
@@ -98,10 +98,13 @@ class Pinouts:
         migrate(db, root)
 
     def path(self, asset):
-        path = (self.root/asset['path']).resolve()
-        if not path.is_relative_to(self.root/'pinouts'):
+        # Checked lexically: resolve() made ~7 file-system lookups per image, which
+        # dominated a publish over thousands of SVGs on Windows and network drives.
+        relative = PurePosixPath(str(asset['path']).replace('\\', '/'))
+        if (relative.is_absolute() or ':' in str(relative) or '..' in relative.parts
+                or not relative.parts or relative.parts[0].casefold() != 'pinouts'):
             raise ValueError('Image path is outside the managed pinouts folder')
-        return path
+        return self.root.joinpath(*relative.parts)
 
     def import_image(self, filename):
         filename = Path(filename)

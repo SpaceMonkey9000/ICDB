@@ -3,17 +3,15 @@
 The base identifies the database, independently of the application release.
 Revisions count changed records, not user clicks. Rollbacks roll them back too.
 """
-import sqlite3
 import json
 from pathlib import Path
-from tkinter import ttk
 
 CONTENT_TABLES = (
-    'components', 'entries', 'sources', 'source_lines', 'checks',
+    'components', 'component_marking_aliases', 'entries', 'sources', 'source_lines', 'checks',
     'pinout_assets', 'pinout_links', 'icpin_pinouts', 'icpin_bundles',
     'icpin_sources', 'pinout_verified_mappings', 'pinout_match_decisions',
-    'pl_definitions', 'pl_sources', 'pl_conflicts', 'pl_matches',
-    'pl_publications', 'pl_approvals', 'pl_ignored_imports',
+    'pl_definitions', 'pl_sources', 'pl_conflicts', 'pl_assignments',
+    'pl_publications', 'pl_ignored_imports',
 )
 
 
@@ -53,25 +51,3 @@ def install(db):
 def database_version(db):
     base, revision = db.execute('SELECT base,revision FROM icdb_database_version WHERE id=1').fetchone()
     return base + (f'-r{revision}' if revision else '')
-
-
-class DatabaseVersionLabel(ttk.Label):
-    """Keep the status bar current across all tabs and worker connections."""
-    def __init__(self, parent, db):
-        super().__init__(parent, padding=(10,5))
-        self.db = db
-        self.job = None
-        self.bind('<Destroy>', self.stop, add='+')
-        self.refresh()
-
-    def refresh(self):
-        try:
-            self.configure(text='Database: '+database_version(self.db))
-        except sqlite3.Error:
-            pass  # A worker can briefly hold a write lock; try again next tick.
-        self.job = self.after(1000, self.refresh)
-
-    def stop(self, event):
-        if event.widget is self and self.job:
-            self.after_cancel(self.job)
-            self.job = None

@@ -1,4 +1,7 @@
-"""Static SVG and raster reference loading shared by ICDB and ICOCR."""
+"""Static SVG and raster reference loading shared by ICDB and ICOCR.
+
+This file is shared: ICDB and ICOCR each ship a copy, and the two copies must
+stay byte-identical (tools/check_shared_files.py checks this)."""
 import io
 import math
 import sys
