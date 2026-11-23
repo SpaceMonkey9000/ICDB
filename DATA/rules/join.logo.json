@@ -1,9 +1,0 @@
-{
-  "schema_version": 1,
-  "id": "join.logo",
-  "name": "Remove leading logo characters",
-  "category": "Joining",
-  "enabled": true,
-  "kind": "switch",
-  "priority": 100
-}
