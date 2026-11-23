@@ -1,58 +1,60 @@
 # ICDB
 
-Component information and pinouts, in one place.
+Component information, chip markings, and pinouts in one place.
 
-UI Update & aliases Prototype
+ICDB is a Windows app for building and maintaining an electronic component catalogue. Search for a part number or the marking printed on a chip, check what the part does, and view the pinout for its package.
 
-ICDB is a Windows app for browsing electronic components, keeping track of what they do, and building a library of pinout references. Search for a part, check its description, and view the available pinouts alongside it.
+ICDB is the database side of ICSuite and the companion to [ICOCR](https://github.com/SpaceMonkey9000/ICOCR). ICOCR reads chip markings from a camera or photo. ICDB is where you maintain the parts, marking aliases, and pinouts behind those lookups. You can also use ICDB on its own.
 
-It’s the database side of ICSuite, and the companion to [ICOCR](https://github.com/SpaceMonkey9000/ICOCR). ICOCR reads markings from a camera or photo; ICDB is where you maintain the component information and references behind those lookups. You can also use ICDB on its own.
+The current development build is **0.8.6-beta.1**. It uses the updated Qt interface.
 
-![ICDB component browser showing a 74HCT240 and its pinout reference](images/main_window.JPG)
+![ICDB component browser](images/main_window.JPG)
 
-## What you can do
+## Components and marking aliases
 
-- **Find a part.** Search by part number, function, or manufacturer/group.
-- **Build your own catalogue.** Add components, edit descriptions, or bring in a list from CSV.
-- **Keep different packages together.** A component can have several pinout references, so its DIP, SOIC, and other versions can be kept separately.
-- **Create and edit pinouts.** Enter pin numbers, names, and descriptions, with a diagram preview alongside the table.
-- **Reuse a pinout.** Link several components to the same definition where their pin arrangements agree.
-- **Bring in existing references.** Import supported KiCad libraries, pin tables, and other pinout sources, then review the proposed links.
-- **Share references with ICOCR.** Publish the pinouts you’ve accepted so they’re available when reading chips at the bench.
+Use **Components** to search the catalogue, add or edit a device, look up a datasheet, and view its available pinouts.
 
-## Editing a pinout
+A marking alias is the text printed on the chip. Use aliases to keep several verified markings under one device record. Each alias can include the packages it applies to and a source reference. For example, TI documents `MB3232I` as a marking for a package variant of the MAX3232.
 
-The pinout editor keeps the pin table, package preview, and linked components in the same view. You can edit individual cells or paste a whole pin table, then save it as an existing definition or a new one.
+Select a device and use **Add alias** in the **Aliases** panel. You can edit or delete aliases from the same panel. Once saved, a marking can be used to find the device in ICDB and resolve readings in a compatible ICOCR build. When a marking points to several devices, ICOCR lets you choose the correct one.
 
-This also gives you somewhere to record package differences, exposed-pad connections, and source details instead of leaving them scattered across notes.
+## Pinouts and packages
 
-![ICDB pinout editor showing an 74AHC132, its pin table, package diagram, and linked components](images/pinout_editor.JPG)
+A device can have several pinouts, one for each package variant. From **Components**, you can open a linked pinout, assign an existing one, or start a new one.
+
+The **Pinout library** shows the pin table, diagram preview, and devices that share the selected definition. Edit individual pins or paste a complete pin table. You can also record exposed-pad details and the source for a definition.
+
+Several devices can share a definition when the physical package and pin functions agree. Check the exact device, package, and manufacturer’s datasheet before assigning a pinout.
+
+![ICDB pinout editor](images/pinout_editor.JPG)
+
+## Importing and exporting
+
+- **Export selected** in Components writes the selected parts to an ICDB JSON file.
+- **Export all JSON** in Import writes the full catalogue. JSON exports include marking aliases and pinout assignments, with shared pinout definitions included once.
+- **Choose files** in Import previews ICDB JSON batches or component CSV files. Use **Stage import**, review the preview for conflicts and unresolved links, then use **Save** to commit the staged changes. This works for transferring a group of parts or building up a new catalogue in batches.
+
+Component, alias, and pinout edits are staged as you work. **View changes** shows what is pending, **Save** commits it, and **Revert** discards it. The status bar shows the database version separately from the application version.
 
 ## Working with ICOCR
 
-Both apps use the same **ICSuite DATA** folder. Changes to component information stay in the shared database. Pinout edits and accepted links need to be published before the updated diagrams are available to ICOCR.
+Point both apps at the same **ICSuite DATA** folder. In ICOCR, use **Open in ICDB** to go to a recognised device or **Add to ICDB** to start a new record. You can also send a marking from ICOCR History to ICDB as an alias.
 
-Suggested matches are there to help with the lookup work. You review which pinouts belong to which parts before publishing them.
+ICDB publishes changed pinout diagrams after you save. **Settings → Tools** also has controls to publish pinouts and rebuild all SVGs. Use **Reload database** in ICOCR to pick up saved catalogue and alias changes when needed.
 
 ## Getting started
 
-Download ICDB and the separate **ICSuite DATA** package from the [Releases page](https://github.com/SpaceMonkey9000/ICDB/releases). DATA provides the prepared component database and reference files.
+Find the Windows builds and DATA package on the [Releases page](https://github.com/SpaceMonkey9000/ICDB/releases).
 
-1. Install ICDB, or extract the portable version. Python isn’t needed for either build.
-2. Install ICSuite DATA if you don’t already have it.
-3. Open ICDB and check that it’s using the right DATA folder, especially if you also use ICOCR.
-4. Search for a component to browse its information and available pinouts.
+1. Run the ICDB installer or extract the portable build and start `ICDB.exe`. Both builds include what they need to run.
+2. Install the ICSuite DATA package for the prepared catalogue and reference files. If you already use ICOCR, select the same DATA folder in **Settings → Data**.
+3. To build a catalogue from scratch, point ICDB at a separate DATA folder and confirm the empty database prompt at startup.
+4. Search for a part number or a saved marking to view the device and its pinouts.
 
-The database and pinout editing run locally on your PC. Datasheet searches open in your web browser.
-
-## Still a work in progress
-
-ICDB is being developed alongside ICOCR. The catalogue and pinout library are growing, and some entries are incomplete or still need checking.
-
-A similar part number doesn’t guarantee the same pinout. Check the exact device, package, and manufacturer’s datasheet before accepting a reference.
-
-For the detailed editing and import workflows, see the [application notes](ICDB/README.md). Changes are listed in the [changelog](ICDB/CHANGELOG.md).
+The catalogue and pinout editor run locally. Datasheet searches open in your browser.
 
 ## Reporting a problem
 
-An [issue](https://github.com/SpaceMonkey9000/ICDB/issues) with the part number, package, application version, and a screenshot helps explain what went wrong. For a pinout correction, include the relevant datasheet or source reference.
+This is a beta, and some catalogue entries still need pinouts or source checks. Include the part number, package, application version, database version, and a screenshot when opening an issue. For a marking or pinout correction, include the relevant manufacturer reference. [Open an issue](https://github.com/SpaceMonkey9000/ICDB/issues)
+
+See the [application notes](ICDB/README.md) and [changelog](ICDB/CHANGELOG.md) for more detail.
