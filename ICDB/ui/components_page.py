@@ -17,7 +17,7 @@ from ui.pinout_view import PinoutView
 
 
 class ComponentsPage(QWidget):
-    ROW_LIMIT = 15000
+    ROW_LIMIT = 30000
 
     def __init__(self, app):
         super().__init__()
