@@ -58,6 +58,21 @@ summarises Qt UI revisions 3 to 29.
 - A pinout could not be deleted after all its devices had been removed.
 - The pinout and component recovery prompts opened inside each other.
 - The Import button stayed disabled after a refused or failed import.
+- ICDB started with the alias prototype's start-up code: it always used a `DATA` folder
+  next to the application folder, refused `--data`, ignored `ICLENS_DATA` and the saved
+  setting, and **Settings → Data → Change…** did nothing. It now finds the DATA folder
+  as documented, and uses the `ICSuite / ICDB-PySide6` settings.
+- Save always failed when an import was staged next to component changes that touch
+  the same parts. The import preview now includes the staged component changes. If
+  components change after an import is staged, Save previews the import again.
+- **Undo deletion** on a pinout left its devices removed, so Save still unassigned them.
+- A staged pinout deletion could not be saved while its unfinished pin edits were invalid.
+- Pinouts saved from the close dialog, or whose publication failed or was refused, were
+  not published until a manual publish. Pending publications are now saved together
+  with the changes and finished at the next start.
+- Publishing never removed superseded generated SVGs; they are now removed, and
+  **Removed** in the publish result counts them.
+- The pinout delete button could keep the label of the previously open pinout.
 - A first selection in the Pinout library could crash before the window finished
   starting.
 - Floating Save and Revert windows appeared on Windows.

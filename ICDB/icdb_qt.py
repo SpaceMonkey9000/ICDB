@@ -14,7 +14,7 @@ from PySide6.QtWidgets import (
 )
 
 from builder import connect, UI_BUSY_TIMEOUT_SECONDS
-from shared_data import database_file
+from shared_data import data_directory, database_file, save_directory
 from pinouts import Pinouts
 from pin_library import Library
 from version import APP_VERSION
@@ -31,7 +31,6 @@ from ui.job_runner import JobRunnerMixin
 from ui.session import SessionMixin
 
 ROOT = Path(__file__).resolve().parent
-TEST_DATA = ROOT.parent / 'DATA'
 
 
 def app_icon():
@@ -55,10 +54,10 @@ class MainWindow(SessionMixin, IcocrHandoffMixin, JobRunnerMixin, QMainWindow):
         super().__init__()
         self.setWindowIcon(app_icon())
         self.data = data
-        self.settings = QSettings('ICSuite', 'ICDB-Alias-Prototype')
+        self.settings = QSettings('ICSuite', 'ICDB-PySide6')
         self.dark_theme = str(self.settings.value('appearance/theme', 'light')) == 'dark'
         self.invert_pinout = str(self.settings.value('appearance/invert_pinout', 'true')).lower() in ('true','1','yes')
-        self.setWindowTitle(f'ICDB {APP_VERSION} — Alias Prototype')
+        self.setWindowTitle(f'ICDB {APP_VERSION}')
         self.job = None
         self.job_done = None
         self.job_error = None
@@ -239,8 +238,21 @@ class MainWindow(SessionMixin, IcocrHandoffMixin, JobRunnerMixin, QMainWindow):
         self.library_page.refresh()
 
     def change_data(self):
-        QMessageBox.information(self, 'Alias Prototype', f'This build uses its own DATA folder:\n{TEST_DATA}')
-        return False
+        """Choose the shared DATA folder for ICDB and ICOCR. Applies on the next start."""
+        folder = QFileDialog.getExistingDirectory(self, 'Choose the shared DATA folder', str(self.data))
+        if not folder:
+            return False
+        try:
+            saved = save_directory(folder)
+        except (OSError, ValueError) as exc:
+            QMessageBox.critical(self, 'DATA folder', f'The DATA folder could not be saved:\n{exc}')
+            return False
+        if not database_file(saved).is_file():
+            QMessageBox.warning(self, 'DATA folder',
+                f'No ICDB database was found in {saved}. ICDB will ask before creating one at the next start.')
+        QMessageBox.information(self, 'DATA folder',
+            f'DATA folder saved:\n{saved}\n\nRestart ICDB and ICOCR to use it.')
+        return True
 
     def closeEvent(self, event):
         if self.job is not None:
@@ -346,9 +358,9 @@ def main():
     if args.self_test:
         return self_test(application, args.report)
     try:
-        data = TEST_DATA.resolve()
-        if args.data and Path(args.data).resolve() != data:
-            raise ValueError('The alias prototype only opens its own DATA folder: ' + str(data))
+        # --data applies to this session only; otherwise ICLENS_DATA, the saved setting,
+        # or the default location (shared_data.data_directory).
+        data = Path(args.data).expanduser().resolve() if args.data else data_directory(ROOT)
     except Exception as exc:
         QMessageBox.critical(None, 'ICDB startup failed', str(exc))
         return 1

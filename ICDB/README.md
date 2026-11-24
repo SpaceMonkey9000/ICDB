@@ -20,9 +20,9 @@ start `ICDB.exe`. No Python is needed.
    requirements.
 3. Start ICDB with `run_qt_windows.bat`.
 
-ICDB opens an existing database; it never creates an empty one. If no database is
-found, it says where it looked. Point it at your shared DATA folder (see below), or
-install a DATA pack first.
+ICDB opens the database in the shared DATA folder. If none is found there, it shows
+where it looked and asks before creating an empty one. To use an existing database,
+point ICDB at your shared DATA folder (see below), or install a DATA pack first.
 
 ## Using ICDB
 

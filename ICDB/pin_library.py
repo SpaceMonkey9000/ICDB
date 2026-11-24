@@ -474,7 +474,7 @@ class Library:
         definition_ids limits the run to the assignments of those pinouts (used after
         Save, which must not walk the whole catalogue); None publishes everything.
         progress(done, total) is called now and then from this (worker) thread."""
-        created = []; changed = 0; unchanged = 0; removed = 0; rendered = 0; skipped = []
+        created = []; changed = 0; unchanged = 0; removed = 0; rendered = 0; skipped = []; orphans = []
         db = self.db
         try:
             db.execute('BEGIN IMMEDIATE')
@@ -553,6 +553,17 @@ class Library:
                                (row['component_id'], row['link_id']))
                 db.execute('UPDATE pinout_links SET is_default=? WHERE id=? AND is_default<>?',
                            (row['is_default'], row['link_id'], row['is_default']))
+            # Generated SVG revisions that no link refers to any more (superseded by an edit,
+            # a rename, or an unassigned device). Rows go in this transaction, files after it.
+            orphans = [r[0] for r in db.execute("""SELECT a.path FROM pinout_assets a
+                WHERE a.path LIKE 'pinouts/generated/%'
+                AND NOT EXISTS (SELECT 1 FROM pinout_links l WHERE l.asset_id=a.id)
+                AND NOT EXISTS (SELECT 1 FROM pinout_discovered d WHERE d.asset_id=a.id)
+                AND NOT EXISTS (SELECT 1 FROM icpin_pinouts i WHERE i.asset_id=a.id)""")]
+            if orphans:
+                db.executemany('DELETE FROM pinout_assets WHERE path=?', ((path,) for path in orphans))
+                db.executemany('DELETE FROM pl_file_hashes WHERE path=?', ((path,) for path in orphans))
+                removed = len(orphans)
             db.commit()
         except Exception:
             db.rollback()
@@ -560,6 +571,12 @@ class Library:
                 if not db.execute('SELECT 1 FROM pinout_assets WHERE path=?',(path.relative_to(self.root).as_posix(),)).fetchone():
                     path.unlink(missing_ok=True)
             raise
+        created_now = {path.relative_to(self.root).as_posix() for path in created}
+        for relative in orphans:
+            if relative in created_now:
+                continue
+            try: self.store.path({'path': relative}).unlink(missing_ok=True)
+            except (OSError, ValueError): pass  # a leftover file is harmless; the row is gone
         result = dict(updated=changed,unchanged=unchanged,removed=removed,skipped=skipped)
         if force: result['rendered'] = rendered
         return result

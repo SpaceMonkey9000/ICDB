@@ -11,13 +11,22 @@ ACTIONS = frozenset(('New', 'New part', 'New pinout', 'Reused pinout',
 PUBLISH_ACTIONS = frozenset(('New assignment', 'Set default preference'))
 
 
-def preview_files(library, paths, progress):
+def preview_files(library, paths, progress, components=None):
+    """components: a staged ComponentDraft payload. Save writes staged component changes
+    before the import, so the preview applies them first in the same way; without
+    this a staged import could never be saved next to an overlapping staged component."""
     files = []
     db = library.db
     # Plan against the effects of earlier files using the same writes as Save.
     # The planning transaction is always rolled back and never publishes SVGs.
     db.execute('BEGIN IMMEDIATE')
     try:
+        if components:
+            from qt_component_draft import ComponentDraft
+            staged = ComponentDraft()
+            staged.restore(db, dict(components, pending_import=None))
+            created = staged.apply_locked(db)
+            staged.apply_aliases_locked(db, created)
         for index, source in enumerate(paths, 1):
             entry = source if isinstance(source, dict) else {'path': source, 'kind': Path(source).suffix.lower()}
             files.append(plan_file(library, entry))

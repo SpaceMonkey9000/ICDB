@@ -31,11 +31,40 @@ class SessionMixin:
             if self.save_component_draft():
                 self.message('No staged component changes.')
 
-    def stage_import(self, kind, payload, rows):
+    def stage_import(self, kind, payload, rows, components=None):
+        """components: component_fingerprint() of the staged components the preview used."""
         if self.component_stage.pending_import:
             raise ValueError('Save or Revert the staged import before staging another batch.')
-        self.component_stage.pending_import = {'kind': kind, 'payload': payload, 'rows': rows}
+        staged = {'kind': kind, 'payload': payload, 'rows': rows}
+        if components is not None:
+            staged['components'] = components
+        self.component_stage.pending_import = staged
         self.component_changed()
+
+    def component_fingerprint(self):
+        """Identifies the staged component changes (not the import) an import preview used."""
+        payload = self.component_stage.payload()
+        payload.pop('pending_import', None)
+        payload.pop('next_temp', None)
+        return json.dumps(payload, sort_keys=True, default=str)
+
+    def start_import_preview(self, files, callback, on_error=None):
+        """Preview import files against the database plus the staged component changes.
+        Returns the fingerprint of those changes, or None when the job was refused."""
+        fingerprint = self.component_fingerprint()
+        components = self.component_stage.payload() if self.component_stage.changed else None
+        if components is not None:
+            components.pop('pending_import', None)
+        payload = {'files': files, 'components': components}
+        if not self.run_job('import_preview', payload, callback, on_error=on_error):
+            return None
+        return fingerprint
+
+    def staged_import_is_stale(self):
+        """True when components were staged or changed after the staged import's preview."""
+        staged = self.component_stage.pending_import
+        return bool(staged and staged.get('kind') == 'files' and 'components' in staged
+                    and staged['components'] != self.component_fingerprint())
 
     def apply_import_locked(self):
         staged = self.component_stage.pending_import
@@ -110,6 +139,7 @@ class SessionMixin:
         finally:
             self._startup_recovery_pending = False
             self._component_recovery_pending = False
+            QTimer.singleShot(0, self._resume_pending_publish)
             if self.requested_alias:
                 QTimer.singleShot(0, lambda: self.stage_alias(*self.requested_alias))
             elif self.requested_part:
@@ -459,12 +489,28 @@ class SessionMixin:
         deletions = copy.deepcopy(page.pending_deletions)
         if not (drafts or deletions or self.component_stage.changed):
             return True
+        if self.staged_import_is_stale():
+            # The import was planned without the component changes staged since; Save
+            # would refuse it. Plan it again and let the user check the new result.
+            QMessageBox.information(self, 'Save changes',
+                'Component changes were staged after the import was previewed, and they can '
+                'change what the import does. The import is being previewed again: check it on '
+                'the Import tab, then Save again.')
+            self.import_page.repreview_staged_import()
+            return False
         if not confirmed and not self.confirm_save():
             return False
         try:
             # Prepare/validate every pinout before beginning the transaction.
-            prepared = [(key, draft, self._pinout_data_from_draft(draft))
-                        for key, draft in drafts.items()]
+            prepared = []
+            for key, draft in drafts.items():
+                if key in deletions and not draft['new']:
+                    # The pinout is deleted by this Save: only its membership changes
+                    # matter, so unfinished pin edits must not block the Save.
+                    data = copy.deepcopy(self.library.get(int(draft['definition_id']))[1])
+                else:
+                    data = self._pinout_data_from_draft(draft)
+                prepared.append((key, draft, data))
             reuse = self._confirm_matching_pinouts(prepared, deletions)
             if reuse is None:
                 return False
@@ -523,6 +569,10 @@ class SessionMixin:
                 targets |= {row[0] for row in self.db.execute(
                     'SELECT DISTINCT definition_id FROM pl_assignments WHERE component_id IN '
                     '(SELECT value FROM json_each(?))', (json.dumps(renamed),))}
+            if targets or publish_import:
+                # Committed with the Save, so a publish that never runs (ICDB closed, a
+                # crash, a failed job) is picked up at the next start.
+                self._store_publish_targets(None if publish_import else targets)
             self.db.commit()
         except Exception as exc:
             self.db.rollback()
@@ -578,7 +628,10 @@ class SessionMixin:
 
     def _publish_after_new_pinout(self):
         """Publish the pinouts the last Save changed, without a separate user action."""
+        if getattr(self, '_closed', False):
+            return  # queued by a Save on close; the stored targets are published next start
         def completed(result):
+            self._clear_publish_targets(targets)
             self.refresh()
             self.library_page.refresh_members()
             skipped = result.get('skipped', [])
@@ -617,6 +670,65 @@ class SessionMixin:
             self._queue_publish(targets)
             self.set_unpublished(True)
             self.message('Database saved; SVG publication not started')
+
+    # Pinouts that a Save changed and that are not yet published, kept in pl_settings
+    # (not a content table, so the database version does not change).
+    PUBLISH_KEY = 'publish_pending'
+
+    def _stored_publish_targets(self):
+        """set() when nothing is pending, a set of pinout ids, or None for everything."""
+        row = self.db.execute('SELECT value FROM pl_settings WHERE key=?', (self.PUBLISH_KEY,)).fetchone()
+        if row is None:
+            return set()
+        try:
+            value = json.loads(row[0])
+            return None if value.get('all') else {int(i) for i in value.get('ids', [])}
+        except (ValueError, TypeError, AttributeError):
+            return None  # unreadable: publishing everything is always safe
+
+    def _store_publish_targets(self, definition_ids):
+        """Add pinouts (None: all) to the stored queue, in the caller's transaction."""
+        stored = self._stored_publish_targets()
+        if definition_ids is None or stored is None:
+            value = {'all': True}
+        else:
+            value = {'ids': sorted(stored | {int(i) for i in definition_ids})}
+        self.db.execute('INSERT OR REPLACE INTO pl_settings(key,value) VALUES(?,?)',
+                        (self.PUBLISH_KEY, json.dumps(value)))
+
+    def _clear_publish_targets(self, published):
+        """Remove published pinouts (None: all) from the stored queue."""
+        try:
+            with self.db:
+                stored = self._stored_publish_targets()
+                remaining = set() if published is None else (
+                    None if stored is None else stored - set(published))
+                if remaining is None:
+                    return  # a partial publish does not settle a stored 'publish all'
+                if remaining:
+                    self.db.execute('INSERT OR REPLACE INTO pl_settings(key,value) VALUES(?,?)',
+                                    (self.PUBLISH_KEY, json.dumps({'ids': sorted(remaining)})))
+                else:
+                    self.db.execute('DELETE FROM pl_settings WHERE key=?', (self.PUBLISH_KEY,))
+        except Exception as exc:
+            self.message(f'Could not update the publish queue: {exc}')
+
+    def _resume_pending_publish(self):
+        """At start-up, publish what an earlier session saved but did not publish."""
+        if getattr(self, '_closed', False):
+            return
+        try:
+            stored = self._stored_publish_targets()
+        except Exception:
+            return
+        if stored is not None and not stored:
+            return
+        self._queue_publish(stored)
+        self.set_unpublished(True)
+        if self.job is None and not (self.library_page.has_pending() or self.component_stage.changed):
+            self._publish_after_new_pinout()
+        else:
+            self.message('Saved pinout changes are not yet published to ICOCR; use Publish to ICOCR.')
 
     def save_draft(self):
         page = getattr(self, 'library_page', None)

@@ -119,5 +119,6 @@ class PinoutDraftsMixin:
             self.table.blockSignals(False)
         self.refresh_members()
         self._update_use_existing_button()
+        self._update_delete_button()
         self.render()
         self.app.update_draft_ui()

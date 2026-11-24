@@ -16,9 +16,16 @@ class JobRunnerMixin:
                   'json_export': 'Exporting JSON', 'publish': 'Publishing pinouts', 'rebuild': 'Rebuilding SVGs'}
 
     def can_run_database_job(self, operation, payload=None):
-        csv_only = operation == 'import_preview' and all((entry['kind'] if isinstance(entry, dict) else Path(entry).suffix.lower()) == '.csv'
-                       for entry in payload)
-        if not csv_only and (self.library_page.has_pending() or self.component_stage.changed):
+        if operation == 'import_preview':
+            # The preview applies staged component changes itself (see preview_files).
+            # Staged pinout edits are written before a JSON import too, so they still block it.
+            files = payload['files'] if isinstance(payload, dict) else payload
+            csv_only = all((entry['kind'] if isinstance(entry, dict) else Path(entry).suffix.lower()) == '.csv'
+                           for entry in files)
+            blocked = not csv_only and self.library_page.has_pending()
+        else:
+            blocked = self.library_page.has_pending() or self.component_stage.changed
+        if blocked:
             QMessageBox.warning(self, 'Unsaved changes',
                 'Save or Revert staged edits before running a database operation.')
             return False
@@ -91,6 +98,7 @@ class JobRunnerMixin:
                   f"Removed: {result.get('removed', 0)}"]
         skipped = result.get('skipped', [])
         self._publish_targets = set()  # a full publish covers anything still queued
+        self._clear_publish_targets(None)
         self.set_unpublished(bool(skipped))
         self.message(', '.join(lines) + (f', {len(skipped)} skipped' if skipped else ''))
         summary = '\n'.join(lines)

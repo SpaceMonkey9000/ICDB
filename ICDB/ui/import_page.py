@@ -17,6 +17,7 @@ class ImportPage(QWidget):
         super().__init__()
         self.owner = owner
         self.files = []
+        self.preview_components = None  # staged-component fingerprint the preview used
         self.review_after_save = False
         layout = QVBoxLayout(self)
         toolbar = QHBoxLayout()
@@ -75,10 +76,12 @@ class ImportPage(QWidget):
             self, 'Import components', str(self.owner.data), 'Import files (*.csv *.json)')
         if not paths:
             return
-        if not self.owner.run_job('import_preview', paths, self.preview_ready,
-                                  on_error=lambda message: self.summary.setText(message)):
+        fingerprint = self.owner.start_import_preview(
+            paths, self.preview_ready, on_error=lambda message: self.summary.setText(message))
+        if fingerprint is None:
             return
         self.clear_preview()
+        self.preview_components = fingerprint
         self.summary.setText('Reading import files…')
 
     @staticmethod
@@ -118,14 +121,49 @@ class ImportPage(QWidget):
     def commit_preview(self):
         if not self.files:
             return
+        if (self.preview_components is not None
+                and self.preview_components != self.owner.component_fingerprint()):
+            # Components were staged or changed while this preview was shown.
+            fingerprint = self.owner.start_import_preview(self.files, self.preview_ready)
+            if fingerprint is not None:
+                self.preview_components = fingerprint
+                self.summary.setText('Component changes were staged since this preview; '
+                                     'previewing again. Check the result, then stage the import.')
+            return
         try:
-            self.owner.stage_import('files', self.files, self.file_rows(self.files))
+            self.owner.stage_import('files', self.files, self.file_rows(self.files),
+                                    components=self.preview_components)
         except ValueError as exc:
             QMessageBox.warning(self, 'Stage import', str(exc))
             return
         self.import_button.setEnabled(False)
         self.update_delete_button()
         self.summary.setText('Import staged. Use Save to commit or Revert to discard.')
+
+    def repreview_staged_import(self):
+        """Plan the staged import again against the current staged components."""
+        staged = self.owner.component_stage.pending_import
+        if not staged or staged.get('kind') != 'files':
+            return
+        result = {}
+
+        def replanned(files):
+            current = self.owner.component_stage.pending_import
+            if current is not staged:
+                return  # reverted or saved meanwhile
+            current.update(payload=files, rows=self.file_rows(files), components=result['fingerprint'])
+            self.files = []
+            self.show_rows(self.file_rows(files))
+            self.set_import_pending(True)
+            self.summary.setText('Staged import previewed again with the staged component changes. '
+                                 'Check it, then Save.')
+            self.owner.component_changed()  # journal the new plan
+            self.owner.tabs.setCurrentWidget(self)
+
+        fingerprint = self.owner.start_import_preview(staged['payload'], replanned)
+        if fingerprint is not None:
+            result['fingerprint'] = fingerprint
+            self.summary.setText('Previewing the staged import again…')
 
     def restore_staged_import(self, staged):
         rows = staged['rows']
@@ -169,7 +207,9 @@ class ImportPage(QWidget):
             selected.setdefault(file_index, set()).add(tuple(key) if isinstance(key, list) else key)
         files = [exclude_rows(entry, selected[i]) if i in selected else entry
                  for i, entry in enumerate(self.files)]
-        self.owner.run_job('import_preview', files, self.preview_ready)
+        fingerprint = self.owner.start_import_preview(files, self.preview_ready)
+        if fingerprint is not None:
+            self.preview_components = fingerprint
 
     def update_review_summary(self):
         remaining = self.preview.rowCount()

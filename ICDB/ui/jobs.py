@@ -25,7 +25,12 @@ class DatabaseJob(QThread):
                 db = connect(self.path)
                 library = Library(Pinouts(db, self.data))
                 if self.operation == 'import_preview':
-                    result = preview_files(library, self.payload, self.progress.emit)
+                    payload = self.payload
+                    if isinstance(payload, dict):
+                        result = preview_files(library, payload['files'], self.progress.emit,
+                                               payload.get('components'))
+                    else:
+                        result = preview_files(library, payload, self.progress.emit)
                 else:
                     result = export_batch(library, *self.payload)
                 self.succeeded.emit(result)

@@ -114,7 +114,15 @@ class PinoutActionsMixin:
             return
         key = str(ident)
         if key in self.pending_deletions:
-            self.pending_deletions.pop(key)
+            deletion = self.pending_deletions.pop(key)
+            # The editor holds this pinout's state; staging the deletion also stashed a
+            # copy with its devices removed, which Save would otherwise still apply.
+            self.pending_pinouts.pop(key, None)
+            self.changed = self._pin_fields_changed or self._draft_members != self._base_members
+            # Staging the deletion removed the pinout's devices; put them back.
+            restore = set(map(int, deletion.get('restore_members', deletion.get('members', []))))
+            if restore != self._draft_members:
+                self._stage_group(restore)
             self.app.update_draft_ui()
             self.app.save_draft() if self.has_pending() else self.app.clear_draft()
             self.refresh()
@@ -153,6 +161,7 @@ class PinoutActionsMixin:
         self.stash_current()
         self.pending_deletions[key] = {'definition_id': int(ident), 'revision': row['revision'],
                                         'members': sorted(accepted),
+                                        'restore_members': sorted(members),
                                         'name': str(data.get('device', 'Untitled')),
                                         'package': str(data.get('package', ''))}
         self.app.update_draft_ui()
