@@ -211,6 +211,7 @@ class PinoutLibraryPage(PinEditorMixin, PinoutDraftsMixin, PinoutGroupsMixin, Pi
         self.members.horizontalHeader().setStretchLastSection(True)
         self.members.setSortingEnabled(True)
         self.members.itemSelectionChanged.connect(self.update_group_actions)
+        self.members.itemDoubleClicked.connect(self.open_group_member)
         gv.addWidget(self.members,1)
         group_tools.addStretch(1)
         gv.addLayout(group_tools)

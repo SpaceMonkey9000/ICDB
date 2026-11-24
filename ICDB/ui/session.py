@@ -383,9 +383,8 @@ class SessionMixin:
     def confirm_save(self):
         while True:
             dlg = QMessageBox(self)
-            dlg.setWindowTitle('Save staged changes')
-            dlg.setText(f'Save {self.pending_summary(capitalize=False)}?')
-            dlg.setInformativeText('All changes will be committed as one SQLite transaction.')
+            dlg.setWindowTitle('Save changes')
+            dlg.setText('Save changes to database?')
             save_btn = dlg.addButton('Save', QMessageBox.ButtonRole.AcceptRole)
             review_btn = dlg.addButton('View changes', QMessageBox.ButtonRole.ActionRole)
             dlg.addButton('Cancel', QMessageBox.ButtonRole.RejectRole)

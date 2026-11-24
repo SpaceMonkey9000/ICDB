@@ -335,3 +335,67 @@ def test_save_as_new_with_unchanged_pins_is_refused_up_front(window):
     page.pins.item(0, 1).setText('CHANGED')
     page.save(as_new=True)
     assert page._new and page.definition_id is None
+
+
+def test_group_device_double_click_opens_component(window, monkeypatch):
+    from PySide6.QtCore import Qt
+
+    page = window.library_page
+    page._show_definition(window.test_pinout)
+    window.tabs.setCurrentWidget(page)
+    window.components.search.setText('unrelated filter')
+    monkeypatch.setattr(window.components, 'ROW_LIMIT', 0)
+    item = page.members.item(0, 1)
+    component_id = item.data(Qt.ItemDataRole.UserRole)
+    page.members.itemDoubleClicked.emit(item)
+    assert window.tabs.currentWidget() is window.components
+    assert window.components.selected_id() == component_id
+
+    staged_id = window.component_stage.add('STAGED123', 'Draft device')
+    page._stage_group(page._draft_members | {staged_id})
+    window.tabs.setCurrentWidget(page)
+    item = next(page.members.item(i, 0) for i in range(page.members.rowCount())
+                if page.members.item(i, 0).data(Qt.ItemDataRole.UserRole) == staged_id)
+    page.members.itemDoubleClicked.emit(item)
+    assert window.tabs.currentWidget() is window.components
+    assert window.components.selected_id() == staged_id
+    assert staged_id in page._draft_members
+
+
+def test_database_version_migrates_and_tracks_committed_changes(tmp_path):
+    import sqlite3
+    from database_version import database_version
+
+    path = tmp_path / 'components.sqlite'
+    from builder import SCHEMA
+
+    legacy = sqlite3.connect(path)
+    with legacy:
+        legacy.executescript(SCHEMA)
+        legacy.executescript('''
+            CREATE TABLE icdb_database_version (
+                id INTEGER PRIMARY KEY, base TEXT NOT NULL, revision INTEGER NOT NULL);
+            INSERT INTO icdb_database_version VALUES(1,'Unversioned',0);
+            CREATE TRIGGER icdb_rev_components_insert AFTER INSERT ON components BEGIN
+                UPDATE icdb_database_version SET revision=revision+1 WHERE id=1;
+            END;
+            CREATE TRIGGER icdb_rev_components_update AFTER UPDATE ON components
+            WHEN OLD.function IS NOT NEW.function BEGIN
+                UPDATE icdb_database_version SET revision=revision+1 WHERE id=1;
+            END;
+            INSERT INTO components(part_number) VALUES ('LM358');
+        ''')
+    legacy.close()
+
+    db = connect(path)
+    assert database_version(db) == 'Date unknown-r1'
+    with sqlite3.connect(path) as writer:
+        writer.execute('UPDATE components SET function=function')
+        assert database_version(writer) == 'Date unknown-r1'
+        writer.execute("UPDATE components SET function='Op-amp'")
+        writer.rollback()
+        assert database_version(writer) == 'Date unknown-r1'
+        writer.execute("UPDATE components SET function='Op-amp'")
+    day = db.execute("SELECT date('now','localtime')").fetchone()[0]
+    assert database_version(db) == f'{day}-r2'
+    db.close()

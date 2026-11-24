@@ -270,7 +270,17 @@ class ComponentsPage(QWidget):
                 pinouts.setdefault(cid, set()).add(label)
         return pinouts
 
-    def refresh(self, focus_id=None):
+    def open_device(self, cid):
+        record = self._record(cid)
+        if record is None:
+            self.app.message('This device is unavailable.')
+            return
+        self.app.tabs.setCurrentWidget(self)
+        self.search.setText(record['part_number'])
+        self.refresh(focus_id=cid, include_focused=True)
+        self.table.setFocus()
+
+    def refresh(self, focus_id=None, *, include_focused=False):
         if focus_id is None:
             focus_id = self.selected_id()
         text = self.search.text()
@@ -309,6 +319,10 @@ class ComponentsPage(QWidget):
                             *[(cid, state['after']) for cid, state in stage.edits.items() if cid not in listed]]:
             if cid in alias_ids or matches(values):
                 visible.append({'id': cid, **values})
+        if include_focused and not any(row['id'] == focus_id for row in visible):
+            focused = self._record(focus_id)
+            if focused is not None:
+                visible.append({'id': focus_id, **focused})
         rows = visible
 
         pinouts = self._pinout_labels()

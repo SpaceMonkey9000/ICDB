@@ -160,6 +160,9 @@ class PinoutGroupsMixin:
         self.members.setSortingEnabled(sorting)
         self.update_group_actions()
 
+    def open_group_member(self, item):
+        self.app.components.open_device(item.data(Qt.ItemDataRole.UserRole))
+
     def add_members(self):
         if self.data is None:
             return

@@ -37,7 +37,6 @@ class ImportPage(QWidget):
         toolbar.addWidget(self.delete_button)
         toolbar.addStretch()
         layout.addLayout(toolbar)
-        layout.addWidget(QLabel('CSV columns: part_number,description. Existing parts are skipped, never overwritten.'))
         self.preview = QTableWidget(0, 5)
         self.preview.setHorizontalHeaderLabels(['Part or pinout', 'Description or package', 'Action', 'Details', 'File'])
         self.preview.verticalHeader().hide()
