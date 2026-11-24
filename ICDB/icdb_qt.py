@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 from PySide6.QtCore import Qt, QTimer, QSettings, QStandardPaths
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QHBoxLayout, QTabWidget, QLabel, QPushButton, QMessageBox, QFileDialog,
 )
@@ -33,9 +34,26 @@ ROOT = Path(__file__).resolve().parent
 TEST_DATA = ROOT.parent / 'DATA'
 
 
+def app_icon():
+    """Locate ICO in source, PyInstaller one-folder and one-file deployments."""
+    candidates = [ROOT / 'ICDB.ico']
+    if getattr(sys, '_MEIPASS', None):
+        candidates.insert(0, Path(sys._MEIPASS) / 'ICDB.ico')
+    if getattr(sys, 'frozen', False):
+        candidates.append(Path(sys.executable).resolve().parent / 'ICDB.ico')
+    for path in candidates:
+        if path.is_file():
+            icon = QIcon(str(path))
+            if not icon.isNull():
+                return icon
+    return QIcon()
+
+
+
 class MainWindow(SessionMixin, IcocrHandoffMixin, JobRunnerMixin, QMainWindow):
     def __init__(self, data, *, create_database=False):
         super().__init__()
+        self.setWindowIcon(app_icon())
         self.data = data
         self.settings = QSettings('ICSuite', 'ICDB-Alias-Prototype')
         self.dark_theme = str(self.settings.value('appearance/theme', 'light')) == 'dark'
@@ -324,6 +342,7 @@ def main():
     args = parser.parse_args()
     application = QApplication(sys.argv[:1])
     application.setStyle('Fusion')
+    application.setWindowIcon(app_icon())
     if args.self_test:
         return self_test(application, args.report)
     try:

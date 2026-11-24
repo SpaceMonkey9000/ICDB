@@ -10,8 +10,8 @@ import os
 from html import escape
 
 # Renderer version: bump whenever drawn output changes (publish caches key on it).
-VERSION = '0.8.3'
-PACKAGES = ('DIP', 'SOIC', 'MSOP', 'TSSOP', 'SSOP', 'TSOP-I', 'TSOP-II', 'PLCC', 'PowerSO20', 'QFP', 'QFN', 'DFN', 'TO-220', 'TO-252', 'SOT-89', 'TO-247', 'TO-263', 'TO-263AB', 'SOT-223')
+VERSION = '0.8.8'
+PACKAGES = ('DIP', 'SOIC', 'MSOP', 'TSSOP', 'SSOP', 'TSOP-I', 'TSOP-II', 'PLCC', 'PowerSO20', 'QFP', 'QFN', 'DFN', 'TO-220', 'TO-252', 'SOT-89', 'SOT-23', 'TO-247', 'TO-263', 'TO-263AB', 'SOT-223')
 EXPOSED_PAD_PACKAGES = ('SOIC', 'MSOP', 'SSOP', 'TSSOP', 'QFP', 'QFN', 'DFN', 'PowerSO20')
 MAX_PINS = 256
 PLCC_COUNTS = (20, 28, 32, 44, 52, 68, 84)
@@ -26,6 +26,7 @@ def count_limits(package):
     if package == 'TO-263AB': return (3, 7, 2)
     if package == 'SOT-223': return (3, 4, 1)
     if package == 'SOT-89': return (3, 3, 1)
+    if package == 'SOT-23': return (3, 6, 1)
     return (4, 64, 2)
 
 def validate_count(package, count):
@@ -243,9 +244,11 @@ class Scene:
     def __init__(self, width, height):
         self.width, self.height, self.items = width, height, []
 
-    def rect(self, x, y, w, h, fill, stroke='none', dash=None):
+    def rect(self, x, y, w, h, fill, stroke='none', dash=None, radius=0, stroke_width=None):
         style = {'fill': fill, 'stroke': stroke}
         if dash: style['dash'] = dash
+        if radius: style['radius'] = radius
+        if stroke_width is not None: style['stroke_width'] = stroke_width
         self.items.append(('rect', (x, y, w, h), style))
 
     def ellipse(self, x, y, w, h, fill, stroke='none'):
@@ -277,20 +280,22 @@ class Scene:
             if kind == 'text':
                 x, y = pos
                 transform = f' transform="rotate({-style.get("rotation", 0)} {x} {y})"' if style.get('rotation') else ''
-                parts.append(f'<text{transform} x="{x}" y="{y}" font-family="Arial, sans-serif" font-size="{style["size"]}" font-weight="{700 if style["bold"] else 400}" fill="{style["fill"]}" text-anchor="{style["anchor"]}" dominant-baseline="central">{escape(xml_safe(style["value"]))}</text>')
+                parts.append(f'<text{transform} x="{x}" y="{y}" font-family="Segoe UI, Arial, sans-serif" font-size="{style["size"]}" font-weight="{600 if style["bold"] else 400}" fill="{style["fill"]}" text-anchor="{style["anchor"]}" dominant-baseline="central">{escape(xml_safe(style["value"]))}</text>')
             elif kind == 'polygon':
                 points=' '.join(f'{pos[i]:.3f},{pos[i+1]:.3f}' for i in range(0,len(pos),2))
-                parts.append(f'<polygon points="{points}" fill="{style["fill"]}" stroke="{style["stroke"]}" stroke-linejoin="round"/>')
+                parts.append(f'<polygon points="{points}" fill="{style["fill"]}" stroke="{style["stroke"]}" stroke-width="1.35" stroke-linejoin="round"/>')
             elif kind == 'line':
-                parts.append(f'<line x1="{pos[0]}" y1="{pos[1]}" x2="{pos[2]}" y2="{pos[3]}" stroke="#000000"/>')
+                parts.append(f'<line x1="{pos[0]}" y1="{pos[1]}" x2="{pos[2]}" y2="{pos[3]}" stroke="#555555" stroke-width="1.0"/>')
             elif kind == 'rect':
 
                 x, y, w, h = pos
                 dashed = ' stroke-dasharray="'+style['dash']+'"' if style.get('dash') else ''
-                parts.append(f'<rect{dashed} x="{x}" y="{y}" width="{w}" height="{h}" fill="{style["fill"]}" stroke="{style["stroke"]}"/>')
+                radius = f' rx="{style["radius"]}" ry="{style["radius"]}"' if style.get('radius') else ''
+                stroke_width = style.get('stroke_width', 1.35)
+                parts.append(f'<rect{dashed}{radius} x="{x}" y="{y}" width="{w}" height="{h}" fill="{style["fill"]}" stroke="{style["stroke"]}" stroke-width="{stroke_width}"/>')
             else:
                 x, y, w, h = pos
-                parts.append(f'<ellipse cx="{x+w/2}" cy="{y+h/2}" rx="{w/2}" ry="{h/2}" fill="{style["fill"]}" stroke="{style.get("stroke", "none")}"/>')
+                parts.append(f'<ellipse cx="{x+w/2}" cy="{y+h/2}" rx="{w/2}" ry="{h/2}" fill="{style["fill"]}" stroke="{style.get("stroke", "none")}" stroke-width="1.35"/>')
         return '\n'.join(parts + ['</svg>'])
 
     def draw_canvas(self, canvas):
@@ -354,6 +359,10 @@ def draw_exposed_pad(scene, project, left, top, right, bottom):
 
 def diagram(project):
     project.validate()
+    if project.package == 'SOT-23':
+        return sot23_diagram(project)
+    if project.package == 'MSOP':
+        return msop_diagram(project)
     if project.package == 'PLCC':
         return plcc_diagram(project)
     if project.package == 'TSOP-II':
@@ -406,7 +415,7 @@ def diagram(project):
                 (l+corner,b),(l,b-corner),(l,t+corner)])
         scene.ellipse(left+20,top+11,9,9,'#ffffff','#000000')
     else:
-        scene.rect(left,top,body_width,body_height,'#ffffff','#000000')
+        scene.rect(left,top,body_width,body_height,'#f2f2f2','#000000')
         scene.rect(left+5,top+5,body_width-10,body_height-10,'#ffffff','#000000')
         for x,y,sx,sy in [(left,top,1,1),(right,top,-1,1),(left,top+body_height,1,-1),(right,top+body_height,-1,-1)]:
             scene.line(x,y,x+sx*5,y+sy*5)
@@ -417,6 +426,126 @@ def diagram(project):
         y=top+end_space+row*pitch
         scene.text(left+12 if is_left else right-12,y,str(pin.number),13,'#000000','start' if is_left else 'end')
         scene.text(left-lead_length-8 if is_left else right+lead_length+8,y,pin.name,16,'#000000','end' if is_left else 'start',True)
+    return scene
+
+
+
+def msop_diagram(project):
+    """Top-view MSOP with flat leads and a framed body.
+
+    Derived from the reference MSOP-10 package outline. Left leads are
+    numbered top-to-bottom, right leads bottom-to-top. The diagram is
+    schematic, not a scaled mechanical footprint.
+    """
+    half = project.count // 2
+    pitch = 20
+    body_width = 112
+    lead_length = 33
+    lead_height = 10
+    top_offset = 14
+    body_height = (half - 1) * pitch + top_offset * 2
+    label_size = 16
+    margin = max(72, max(text_extent(pin.name, label_size) for pin in project.pins) + lead_length + 24)
+    width = math.ceil(max(margin * 2 + body_width, text_extent(project.device, 22) + 24))
+    cx = width / 2
+    left, right = cx - body_width / 2, cx + body_width / 2
+    top = 76
+    height = top + body_height + 14
+    scene = Scene(width, height)
+    scene.rect(0, 0, width, height, '#ffffff')
+    scene.text(cx, 22, project.device, 22, '#000000', bold=True)
+    scene.text(cx, 49, project_label(project), 14, '#000000')
+
+    # Draw the leads behind the body so the terminal/body junction stays clean.
+    # No artificial bend stripes: the reference uses plain rectangular terminals.
+    for pin in project.pins:
+        is_left = pin.number <= half
+        row = pin.number - 1 if is_left else project.count - pin.number
+        y = top + top_offset + row * pitch
+        x = left - lead_length if is_left else right
+        scene.rect(x, y - lead_height / 2, lead_length, lead_height, '#ffffff', '#000000')
+
+    # Light moulded rim, slightly rounded corners, and a single inset contour.
+    # The leads, pin coordinates and numbering are unchanged.
+    scene.rect(left, top, body_width, body_height, '#f0f0f0', '#555555',
+               radius=5, stroke_width=1.2)
+    scene.rect(left + 5, top + 5, body_width - 10, body_height - 10,
+               '#ffffff', '#777777', radius=3.5, stroke_width=0.8)
+    scene.ellipse(left + 14, top + 11, 9, 9, '#ffffff', '#555555')
+
+    draw_exposed_pad(scene, project, left, top, right, top + body_height)
+    for pin in project.pins:
+        is_left = pin.number <= half
+        row = pin.number - 1 if is_left else project.count - pin.number
+        y = top + top_offset + row * pitch
+        scene.text(left - lead_length - 11 if is_left else right + lead_length + 11,
+                   y, str(pin.number), 13, '#000000', 'end' if is_left else 'start')
+        scene.text(left - lead_length - 29 if is_left else right + lead_length + 29,
+                   y, pin.name, label_size, '#000000', 'end' if is_left else 'start', True)
+    return scene
+
+
+def sot23_diagram(project):
+    """Top view: pin 1 at lower left, CCW around the package.
+
+    The three-terminal variant has two lower leads and a centered upper lead,
+    as in the supplied SOT-23 drawing. Four through six pins split as 2+2,
+    3+2, and 3+3. Package dimensions here are diagrammatic, not to scale.
+    """
+    count = project.count
+    lower_count = (count + 1) // 2
+    upper_count = count - lower_count
+    body_width, body_height = 190, 94
+    body_left = 130
+    body_top = 145
+    body_right = body_left + body_width
+    body_bottom = body_top + body_height
+    lead_width, lead_length = 30, 35
+    scene = Scene(450, 350)
+    scene.rect(0, 0, scene.width, scene.height, '#ffffff')
+    scene.text(225, 23, project.device, 22, '#000000', bold=True)
+    scene.text(225, 49, project_label(project), 14, '#000000')
+
+    def lead_positions(n):
+        # The pins are symmetric and evenly distributed along the long body edge.
+        if n == 1:
+            return [225.0]
+        if n == 2:
+            return [165.0, 285.0]
+        return [156.0, 225.0, 294.0]
+
+    # Leads behind the moulded body; all pin numbers are seen from above.
+    terminal_positions = []
+    for number, x in enumerate(lead_positions(lower_count), start=1):
+        scene.rect(x - lead_width / 2, body_bottom, lead_width, lead_length,
+                   '#ffffff', '#000000')
+        terminal_positions.append((number, x, body_bottom + lead_length, False))
+    for index, x in enumerate(reversed(lead_positions(upper_count))):
+        number = lower_count + index + 1
+        scene.rect(x - lead_width / 2, body_top - lead_length, lead_width, lead_length,
+                   '#ffffff', '#000000')
+        terminal_positions.append((number, x, body_top - lead_length, True))
+
+    # Chamfered top-view moulding, with a thin inset edge like the revised SVGs.
+    chamfer = 6
+    outline = [(body_left + chamfer, body_top), (body_right - chamfer, body_top),
+               (body_right, body_top + chamfer), (body_right, body_bottom - chamfer),
+               (body_right - chamfer, body_bottom), (body_left + chamfer, body_bottom),
+               (body_left, body_bottom - chamfer), (body_left, body_top + chamfer)]
+    scene.polygon(outline, '#f2f2f2', '#000000')
+    scene.rect(body_left + 5, body_top + 5, body_width - 10,
+               body_height - 10, '#ffffff', '#000000')
+    # Pin-one reference on the lower-left corner in top view.
+    scene.ellipse(body_left + 14, body_bottom - 20, 8, 8, '#000000', 'none')
+
+    by_number = {pin.number: pin for pin in project.pins}
+    for number, x, tip, upper in terminal_positions:
+        pin = by_number[number]
+        # Separate rows place numbers and labels beyond the lead tips.
+        number_y = tip - 13 if upper else tip + 13
+        label_y = tip - 32 if upper else tip + 32
+        scene.text(x, number_y, str(number), 13, '#000000')
+        scene.text(x, label_y, pin.name, 14, '#000000', bold=True)
     return scene
 
 
@@ -550,7 +679,7 @@ def leadless_quad_diagram(project):
         marker=10 if project.count>=100 else 15
         scene.ellipse(left+marker,top+marker,10,10,'#ffffff','#000000')
     else:
-        scene.rect(left,top,bw,bh,'#ffffff','#000000')
+        scene.rect(left,top,bw,bh,'#f2f2f2','#000000')
         # Terminals sit inside the package edge, with a clipped inner tip.
         for pin,x,y,dx,dy in positions:
             ux,uy=-dy,dx
@@ -629,16 +758,16 @@ def power_diagram(project):
         scene.text(x,end+14,str(pin.number),13,'#000000')
         scene.text(x,end+30,pin.name,16,'#000000','end',True,rotation=90)
     if sot:
-        scene.rect(left,body_top,bw,body_bottom-body_top,'#ffffff','#000000')
+        scene.rect(left,body_top,bw,body_bottom-body_top,'#f2f2f2','#000000')
         scene.rect(left+4,body_top+4,bw-8,body_bottom-body_top-8,'#ffffff','#000000')
     elif is247:
-        scene.rect(left,body_top,bw,body_bottom-body_top,'#ffffff','#000000')
+        scene.rect(left,body_top,bw,body_bottom-body_top,'#f2f2f2','#000000')
         scene.rect(left+5,body_top+5,bw-10,body_bottom-body_top-10,'#ffffff','#000000')
         scene.ellipse(cx-17,body_top+30,34,34,'#ffffff','#000000')
         for edge in (left,right-20):
             scene.rect(edge,body_top+28,20,44,'#ffffff','#000000')
     elif is220:
-        scene.rect(left,body_top,bw,body_bottom-body_top,'#ffffff','#000000')
+        scene.rect(left,body_top,bw,body_bottom-body_top,'#f2f2f2','#000000')
         scene.polygon([(left+4,body_top+4),(right-4,body_top+4),(right-10,body_top+17),(left+10,body_top+17)])
         scene.rect(left+10,body_top+17,bw-20,body_bottom-body_top-21,'#ffffff','#000000')
         # Semi-circular moulding recesses at either side.

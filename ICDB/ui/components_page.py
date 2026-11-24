@@ -11,13 +11,13 @@ from pin_library import project, package_label
 from pinout import diagram
 from reference_images import load_reference_image
 from ui.alias_dialog import AliasDialog
-from ui.common import NoWheelComboBox, part_search_url, qt_image_from_pil, render_svg
+from ui.common import NoWheelComboBox, part_search_url, qt_image_from_pil
 from ui.dialogs import DeviceDialog, PinoutAssignmentDialog
 from ui.pinout_view import PinoutView
 
 
 class ComponentsPage(QWidget):
-    ROW_LIMIT = 15000
+    ROW_LIMIT = 30000
 
     def __init__(self, app):
         super().__init__()
@@ -518,10 +518,9 @@ class ComponentsPage(QWidget):
         self.edit_pinout_button.setEnabled(kind == 'definition')
         try:
             if kind == 'image':
-                im = qt_image_from_pil(load_reference_image(self.app.pinouts.path(data)))
+                self.pinout.set_image(qt_image_from_pil(load_reference_image(self.app.pinouts.path(data))))
             else:
-                im = render_svg(diagram(project(data['project'])).svg().encode('utf-8'))
-            self.pinout.set_image(im)
+                self.pinout.set_svg(diagram(project(data['project'])).svg().encode('utf-8'))
         except Exception as exc:
             self.pinout.set_image()
             self.app.message(f'Pinout unavailable: {exc}')

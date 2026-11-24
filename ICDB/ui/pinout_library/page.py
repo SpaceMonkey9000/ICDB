@@ -12,7 +12,7 @@ from pin_library import package_label, project, validate_data
 from builder import search_pattern, unicode_like
 from library_queries import definition_rows
 from pinout import diagram, PACKAGES, ROLES
-from ui.common import NoWheelComboBox, render_svg
+from ui.common import NoWheelComboBox
 from ui.pinout_view import PinoutView
 from ui.pinout_library.actions import PinoutActionsMixin
 from ui.pinout_library.drafts import PinoutDraftsMixin
@@ -500,7 +500,7 @@ class PinoutLibraryPage(PinEditorMixin, PinoutDraftsMixin, PinoutGroupsMixin, Pi
         data = None
         try:
             data = self.read_data()
-            self.preview.set_image(render_svg(diagram(project(data)).svg().encode('utf-8')))
+            self.preview.set_svg(diagram(project(data)).svg().encode('utf-8'))
         except Exception as exc:
             self.preview.set_image()
             self.app.message(f'Preview unavailable: {exc}')
